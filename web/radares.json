@@ -1,0 +1,240 @@
+[
+    {
+        "urlName": "sabancuy",
+        "showName": "Radar Sabancuy",
+        "show": true,
+        "maintenance": false,
+        "source": "smn",
+        "radarBrand": "vaisala",
+        "markerCenter": [
+            18.972398,
+            -91.173018
+        ],
+        "products": [
+            {
+                "type": "ppi",
+                "show": true,
+                "moment": "reflectividad",
+                "urlName": "ppi_refl_450",
+                "filter": "SABA_PPIX_REFL_450",
+                "range": 450,
+                "elevation": 0.5,
+                "map": {
+                    "bounds": [
+                        [
+                            23.020217,
+                            -95.451103
+                        ],
+                        [
+                            14.924528,
+                            -86.892193
+                        ]
+                    ],
+                    "zoom": 7.5,
+                    "center": [
+                        18.973889,
+                        -91.179444
+                    ],
+                    "markerCenter": [
+                        18.972398,
+                        -91.173018
+                    ]
+                }
+            },
+            {
+                "type": "ppi",
+                "show": true,
+                "moment": "reflectividad",
+                "urlName": "ppi_refl",
+                "filter": "SABA_PPIX_REFL_299",
+                "range": 300,
+                "elevation": 0.5,
+                "map": {
+                    "bounds": [
+                        [
+                            21.661849,
+                            -94.013617
+                        ],
+                        [
+                            16.283065,
+                            -88.329891
+                        ]
+                    ],
+                    "zoom": 7.5,
+                    "center": [
+                        18.973889,
+                        -91.179444
+                    ],
+                    "markerCenter": [
+                        18.972398,
+                        -91.173018
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "urlName": "cancun",
+        "showName": "Radar Cancún",
+        "show": true,
+        "maintenance": false,
+        "source": "smn",
+        "radarBrand": "eec",
+        "markerCenter": [
+            21.028969,
+            -86.852031
+        ],
+        "products": [
+            {
+                "type": "cmax",
+                "show": true,
+                "moment": "reflectividad",
+                "urlName": "cmax_refl",
+                "filter": "CANC_CMAX_REFL_300",
+                "thresholds": "0 - 50 km",
+                "range": 300,
+                "map": {
+                    "bounds": [
+                        [
+                            23.738166,
+                            -89.737785
+                        ],
+                        [
+                            18.318994,
+                            -83.966424
+                        ]
+                    ],
+                    "zoom": 9,
+                    "center": [
+                        20.927610,
+                        -87.111900
+                    ],
+                    "markerCenter": [
+                        21.028969,
+                        -86.852031
+                    ]
+                }
+            },
+            {
+                "type": "ppi",
+                "show": true,
+                "moment": "reflectividad",
+                "urlName": "ppi_refl",
+                "filter": "CANC_PPIX_REFL_300",
+                "range": 300,
+                "elevation": 0.5,
+                "map": {
+                    "bounds": [
+                        [
+                            23.738166,
+                            -89.737785
+                        ],
+                        [
+                            18.318994,
+                            -83.966424
+                        ]
+                    ],
+                    "zoom": 8,
+                    "center": [
+                        20.927610,
+                        -87.111900
+                    ],
+                    "markerCenter": [
+                        21.028969,
+                        -86.852031
+                    ]
+                }
+            },
+            {
+                "type": "ppi",
+                "show": true,
+                "moment": "reflectividad",
+                "urlName": "ppi_refl_450",
+                "filter": "CANC_PPIX_REFL_450",
+                "range": 450,
+                "elevation": 0.5,
+                "map": {
+                    "bounds": [
+                        [
+                            25.092393,
+                            -91.180037
+                        ],
+                        [
+                            16.963691,
+                            -82.524171
+                        ]
+                    ],
+                    "zoom": 8,
+                    "center": [
+                        20.927610,
+                        -87.111900
+                    ],
+                    "markerCenter": [
+                        21.028969,
+                        -86.852031
+                    ]
+                }
+            },
+            {
+                "type": "ppi",
+                "show": true,
+                "moment": "velocidad",
+                "urlName": "ppi_vel",
+                "filter": "CANC_PPIX_VELO",
+                "range": 300,
+                "elevation": 0.5,
+                "map": {
+                    "bounds": [
+                        [
+                            22.112781,
+                            -88.006482
+                        ],
+                        [
+                            19.945102,
+                            -85.697726
+                        ]
+                    ],
+                    "zoom": 8,
+                    "center": [
+                        20.927610,
+                        -87.111900
+                    ],
+                    "markerCenter": [
+                        21.028969,
+                        -86.852031
+                    ]
+                }
+            },
+            {
+                "type": "ppi",
+                "show": false,
+                "moment": "rain",
+                "urlName": "ppi_rain",
+                "filter": "CANC_PPIX_RAIN",
+                "range": 300,
+                "elevation": 0.5,
+                "map": {
+                    "bounds": [
+                        [
+                            23.738166,
+                            -89.737785
+                        ],
+                        [
+                            18.318994,
+                            -83.966424
+                        ]
+                    ],
+                    "zoom": 8,
+                    "center": [
+                        20.927610,
+                        -87.111900
+                    ],
+                    "markerCenter": [
+                        21.028969,
+                        -86.852031
+                    ]
+                }
+            }
+        ]
+    }
+]
