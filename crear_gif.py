@@ -11,7 +11,7 @@ TRANSICION_FRAME = True  # agregar un frame en blanco entre gifs
 
 def load_gif_frames(gif_path):
     gif = Image.open(gif_path)
-    return [frame.copy() for frame in ImageSequence.Iterator(gif)]
+    return [frame.convert("RGBA") for frame in ImageSequence.Iterator(gif)]
 
 
 def procesar_directorio(estacion, tipo, ruta_gifs):
@@ -30,15 +30,10 @@ def procesar_directorio(estacion, tipo, ruta_gifs):
         print(f"Sin archivos para {estacion}/{tipo}")
         return
 
-    # Preparar frame en blanco para transición
+    # Preparar frame en blanco transparente para transición
     ejemplo_frame = load_gif_frames(gif_files[0])[0]
     width, height = ejemplo_frame.size
-    # Crear imagen paletizada con fondo negro (índice 0)
-    blank_frame = Image.new("P", (width, height), 0)
-
-    ### Paleta: negro (índice 0), blanco (índice 1), resto ceros
-    palette = [0, 0, 0, 255, 255, 255] + [0] * (256 * 3 - 6)
-    blank_frame.putpalette(palette)
+    blank_frame = Image.new("RGBA", (width, height), (0, 0, 0, 0))
 
     # Acumular frames
     all_frames = []
@@ -66,7 +61,7 @@ def procesar_directorio(estacion, tipo, ruta_gifs):
         append_images=all_frames[1:],
         loop=0,
         duration=TRANSICION_MS,
-        transparency=0
+        disposal=2,
     )
 
     fin = time.time()
