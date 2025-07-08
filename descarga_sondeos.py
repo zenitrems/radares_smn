@@ -20,7 +20,7 @@ MAX_IMAGENES = 25
 
 def get_sondeo_radares():
     try:
-        response = requests.get(RDA_REPOSITORY, timeout=15, verify=False)
+        response = requests.get(RDA_REPOSITORY, timeout=15)
         response.raise_for_status()
         sondeos = json.loads(response.content)
 
@@ -71,7 +71,7 @@ def descargar_y_guardar_sondeos(sondeos):
             continue
 
         try:
-            response = requests.get(url, timeout=15, verify=False)
+            response = requests.get(url, timeout=15)
             response.raise_for_status()
 
             with open(destino, "wb") as gif_file:
