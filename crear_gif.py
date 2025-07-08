@@ -5,8 +5,8 @@ from datetime import datetime
 
 SONDEOS_DIR = "./sondeos"
 SALIDA_DIR = "./sondeos_gif"
-TRANSICION_MS = 100  # milisegundos por frame
-TRANSICION_FRAME = True  # agregar un frame en blanco entre gifs
+TRANSICION_MS = 200  # milisegundos por frame
+TRANSICION_FRAME = False  # agregar un frame en blanco entre gifs
 
 
 def load_gif_frames(gif_path):
