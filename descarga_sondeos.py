@@ -18,6 +18,7 @@ ARCHIVE_DIR_BASE = "sondeos_archivo"
 # máximo de archivos a conservar por estación/tipo para crear el GIF
 MAX_IMAGENES = 25
 
+
 def get_sondeo_radares():
     try:
         response = requests.get(RDA_REPOSITORY, timeout=15)
@@ -49,10 +50,11 @@ def extraer_fecha(nombre):
 
 
 def mantener_limite_archivos(directorio):
-    archivos = sorted([f for f in os.listdir(directorio) if f.endswith('.gif')])
+    archivos = sorted([f for f in os.listdir(directorio) if f.endswith(".gif")])
     while len(archivos) > MAX_IMAGENES:
         viejo = archivos.pop(0)
         os.remove(os.path.join(directorio, viejo))
+
 
 def descargar_y_guardar_sondeos(sondeos):
     for sondeo in sondeos:
@@ -92,6 +94,7 @@ def descargar_y_guardar_sondeos(sondeos):
         except requests.exceptions.RequestException as e:
             print(f"Error al descargar {sondeo}: {e}")
 
+
 def main():
     parser = argparse.ArgumentParser(description="Descarga y archiva sondeos")
     parser.add_argument(
@@ -107,6 +110,7 @@ def main():
     else:
         while True:
             get_sondeo_radares()
+            print("sleep")
             time.sleep(args.interval)
 
 
