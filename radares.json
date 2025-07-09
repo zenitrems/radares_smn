@@ -90,7 +90,7 @@
                 "show": true,
                 "moment": "reflectividad",
                 "urlName": "cmax_refl",
-                "filter": "CANC_CMAX_REFL_300",
+                "filter": "CANC_CMAX_REFL",
                 "thresholds": "0 - 50 km",
                 "range": 300,
                 "map": {
@@ -180,7 +180,7 @@
                 "show": true,
                 "moment": "velocidad",
                 "urlName": "ppi_vel",
-                "filter": "CANC_PPIX_VELO",
+                "filter": "PPIX_VELO_120",
                 "range": 300,
                 "elevation": 0.5,
                 "map": {
@@ -192,36 +192,6 @@
                         [
                             19.945102,
                             -85.697726
-                        ]
-                    ],
-                    "zoom": 8,
-                    "center": [
-                        20.927610,
-                        -87.111900
-                    ],
-                    "markerCenter": [
-                        21.028969,
-                        -86.852031
-                    ]
-                }
-            },
-            {
-                "type": "ppi",
-                "show": false,
-                "moment": "rain",
-                "urlName": "ppi_rain",
-                "filter": "CANC_PPIX_RAIN",
-                "range": 300,
-                "elevation": 0.5,
-                "map": {
-                    "bounds": [
-                        [
-                            23.738166,
-                            -89.737785
-                        ],
-                        [
-                            18.318994,
-                            -83.966424
                         ]
                     ],
                     "zoom": 8,
