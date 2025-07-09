@@ -25,6 +25,7 @@ export async function getStaticProps() {
   const contexts = {};
 
   for (const radar of radarsConfig) {
+    // Determina carpeta base según prefijo del filtro (ej. SABA, CANC)
     const prefix = radar.products[0].filter.split("_")[0];
     const radarDir = path.join(process.cwd(), "public", "sondeos", prefix);
     contexts[radar.urlName] = {};
@@ -34,39 +35,60 @@ export async function getStaticProps() {
         contexts[radar.urlName][prod.urlName] = [];
         continue;
       }
-      const prodFolder = prod.urlName.toUpperCase();
-      const dirPath = path.join(radarDir, prodFolder);
-      let files = [];
 
-      if (fs.existsSync(dirPath)) {
-        files = fs
-          .readdirSync(dirPath)
-          .filter((f) => f.endsWith(".gif"))
-          .sort((a, b) => parseTime(a).localeCompare(parseTime(b)))
-          .map((f) => ({
-            src: `/sondeos/${prefix}/${prodFolder}/${f}`,
-            timestamp: parseTime(f),
-          }));
+      // Posibles nombres de carpeta: del filtro y derivados de urlName/range
+      const rawFolder = prod.filter.replace(`${prefix}_`, "");
+      const name1 = rawFolder;
+      const name2 = prod.urlName.toUpperCase();
+      const name3 = prod.range ? `${prod.urlName.toUpperCase()}_${prod.range}` : null;
+      const candidates = [name1, name2, name3].filter(Boolean);
+
+      let folderName = null;
+      let fullPath = null;
+      for (const name of candidates) {
+        const p = path.join(radarDir, name);
+        if (fs.existsSync(p) && fs.lstatSync(p).isDirectory()) {
+          folderName = name;
+          fullPath = p;
+          break;
+        }
       }
+
+      if (!fullPath) {
+        // No se encontró la carpeta; asigna array vacío
+        contexts[radar.urlName][prod.urlName] = [];
+        continue;
+      }
+
+      const files = fs
+        .readdirSync(fullPath)
+        .filter((f) => f.endsWith(".gif"))
+        .sort((a, b) => parseTime(a).localeCompare(parseTime(b)))
+        .map((f) => ({
+          src: `/sondeos/${prefix}/${folderName}/${f}`,
+          timestamp: parseTime(f),
+        }));
 
       contexts[radar.urlName][prod.urlName] = files;
     }
   }
 
-  return {
-    props: { contexts, radarsConfig },
-  };
+  return { props: { contexts, radarsConfig } };
 }
 
 export default function Home({ contexts, radarsConfig }) {
-  const [selectedRadar, setSelectedRadar] = useState(radarsConfig[0].urlName);
+  const [selectedRadar, setSelectedRadar] = useState(
+    radarsConfig[0].urlName
+  );
   const [overlayFrame, setOverlayFrame] = useState(null);
   const [mapConfig, setMapConfig] = useState(null);
 
-  function handleFrameChange(productUrlName, index, frame) {
+  function handleFrameChange(productUrlName, _index, frame) {
     setOverlayFrame(frame);
     const radar = radarsConfig.find((r) => r.urlName === selectedRadar);
-    const prodConf = radar.products.find((p) => p.urlName === productUrlName);
+    const prodConf = radar.products.find(
+      (p) => p.urlName === productUrlName
+    );
     setMapConfig(prodConf.map);
   }
 
@@ -99,7 +121,10 @@ export default function Home({ contexts, radarsConfig }) {
       </div>
 
       <div style={{ padding: "1rem", background: "#f5f5f5" }}>
-        <GifSlider contexts={sliderContexts} onFrameChange={handleFrameChange} />
+        <GifSlider
+          contexts={sliderContexts}
+          onFrameChange={handleFrameChange}
+        />
       </div>
     </div>
   );
