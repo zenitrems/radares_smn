@@ -1,25 +1,56 @@
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
+// src/components/Map.js
+import React, { useEffect } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  ImageOverlay,
+  Marker,
+  useMap,
+} from "react-leaflet";
 
-export default function Map({ radars }) {
-  /* const position = [23.6345, -102.5528]; // Center of Mexico */
-  const position = [21.028969, -86.852031]; // Center of radar cancun
-  
+function FitBounds({ bounds }) {
+  const map = useMap();
+  useEffect(() => {
+    if (bounds) map.fitBounds(bounds);
+  }, [bounds, map]);
+  return null;
+}
+
+export default function Map({ overlay, mapConfig }) {
+  // Mientras no haya config, retornamos un div vacío (o un spinner)
+  if (!mapConfig) {
+    return <div style={{ height: "100%", width: "100%" }} />;
+  }
+
+  const { bounds, center, zoom, markerCenter } = mapConfig;
 
   return (
-    <MapContainer center={position} zoom={9} style={{ height: '100%', width: '100%' }}>
+    <MapContainer
+      center={center}
+      zoom={zoom}
+      style={{ height: "100%", width: "100%" }}
+      scrollWheelZoom
+    >
       <TileLayer
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution="&copy; OpenStreetMap contributors"
       />
-      {radars.filter(r => r.show).map(radar => (
-        <Marker key={radar.urlName} position={radar.markerCenter} icon={L.icon({
-          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
-        })}>
-          <Popup>{radar.showName}</Popup>
-        </Marker>
-      ))}
+
+      {/* Ajustamos la vista a los bounds */}
+      <FitBounds bounds={bounds} />
+
+      {/* Marcador en el centro del radar */}
+      {markerCenter && <Marker position={markerCenter} />}
+
+      {/* Capa de GIF */}
+      {overlay && (
+        <ImageOverlay
+          url={overlay.src}
+          bounds={bounds}
+          opacity={1.0}
+          crossOrigin={true}
+        />
+      )}
     </MapContainer>
   );
 }

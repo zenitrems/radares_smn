@@ -1,41 +1,47 @@
 // src/components/GifSlider.js
 import React, { useState, useEffect } from "react";
 
-export default function GifSlider({ contexts }) {
+export default function GifSlider({
+  contexts,
+  onFrameChange // callback(product, index, frame)
+}) {
   const products = Object.keys(contexts);
   const [product, setProduct] = useState(products[0]);
   const [frames, setFrames] = useState(contexts[product] || []);
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(frames.length - 1 || 0);
 
+  // Cada vez que cambien contexts o product, recargamos frames
   useEffect(() => {
     const newFrames = contexts[product] || [];
     setFrames(newFrames);
-    // Arranca en el último frame
-    setIndex(newFrames.length > 0 ? newFrames.length - 1 : 0);
+    setIndex(newFrames.length - 1 >= 0 ? newFrames.length - 1 : 0);
   }, [product, contexts]);
 
+  // Cada vez que cambie el frame (o el producto), lo notificamos al padre
+  useEffect(() => {
+    const frame = frames[index];
+    if (onFrameChange && frame) {
+      onFrameChange(product, index, frame);
+    }
+  }, [product, index, frames, onFrameChange]);
+
   const formatoLocal = new Intl.DateTimeFormat("es", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    // timeZone: 'America/Mexico_City'
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit",
+    timeZone: "America/Cancun"
   });
 
   const current = frames[index];
-  const fecha = current ? new Date(current.timestamp) : null;
 
   return (
     <div style={{ textAlign: "center", marginTop: "1rem" }}>
       {frames.length > 0 ? (
         <>
-          <img
+          {/* <img
             src={current.src}
             alt={`${product} frame ${index}`}
             style={{ maxWidth: "100%", height: "auto" }}
-          />
+          /> */}
           <input
             type="range"
             min={0}
@@ -46,22 +52,26 @@ export default function GifSlider({ contexts }) {
           />
         </>
       ) : (
-        <p style={{ marginTop: "1rem" }}>No hay frames para {product}</p>
+        <p>No hay frames para {product}</p>
       )}
-      <label>
-        Producto:&nbsp;
-        <select value={product} onChange={(e) => setProduct(e.target.value)}>
-          {products.map((p) => (
-            <option key={p} value={p}>
-              {p}
-            </option>
-          ))}
-        </select>
-      </label>
+
+      <div style={{ marginTop: "0.5rem" }}>
+        <label>
+          Producto:&nbsp;
+          <select
+            value={product}
+            onChange={(e) => setProduct(e.target.value)}
+          >
+            {products.map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+        </label>
+      </div>
 
       {current && (
-        <p style={{ margin: "0.5rem 0", fontSize: "0.9rem", color: "#555" }}>
-          {formatoLocal.format(fecha)} UTC
+        <p style={{ fontSize: "0.9rem", color: "#555" }}>
+          {formatoLocal.format(new Date(current.timestamp))} Z
         </p>
       )}
     </div>
