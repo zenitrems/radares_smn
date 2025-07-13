@@ -6,7 +6,9 @@ import radarsConfig from "../radares.json";
 import "leaflet/dist/leaflet.css";
 
 const Map = dynamic(() => import("../src/components/Map"), { ssr: false });
-const GifSlider = dynamic(() => import("../src/components/GifSlider"), { ssr: false });
+const GifSlider = dynamic(() => import("../src/components/GifSlider"), {
+  ssr: false,
+});
 
 function parseTime(filename) {
   const m = filename.match(/_(\d{8})_(\d{6})\.gif$/);
@@ -40,7 +42,9 @@ export async function getStaticProps() {
       const rawFolder = prod.filter.replace(`${prefix}_`, "");
       const name1 = rawFolder;
       const name2 = prod.urlName.toUpperCase();
-      const name3 = prod.range ? `${prod.urlName.toUpperCase()}_${prod.range}` : null;
+      const name3 = prod.range
+        ? `${prod.urlName.toUpperCase()}_${prod.range}`
+        : null;
       const candidates = [name1, name2, name3].filter(Boolean);
 
       let folderName = null;
@@ -77,18 +81,14 @@ export async function getStaticProps() {
 }
 
 export default function Home({ contexts, radarsConfig }) {
-  const [selectedRadar, setSelectedRadar] = useState(
-    radarsConfig[0].urlName
-  );
+  const [selectedRadar, setSelectedRadar] = useState(radarsConfig[0].urlName);
   const [overlayFrame, setOverlayFrame] = useState(null);
   const [mapConfig, setMapConfig] = useState(null);
 
   function handleFrameChange(productUrlName, _index, frame) {
     setOverlayFrame(frame);
     const radar = radarsConfig.find((r) => r.urlName === selectedRadar);
-    const prodConf = radar.products.find(
-      (p) => p.urlName === productUrlName
-    );
+    const prodConf = radar.products.find((p) => p.urlName === productUrlName);
     setMapConfig(prodConf.map);
   }
 

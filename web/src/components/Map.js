@@ -6,6 +6,7 @@ import {
   ImageOverlay,
   Marker,
   useMap,
+  Popup,
 } from "react-leaflet";
 
 function FitBounds({ bounds }) {
@@ -16,7 +17,7 @@ function FitBounds({ bounds }) {
   return null;
 }
 
-export default function Map({ overlay, mapConfig }) {
+export default function Map({ overlay, mapConfig, radarsConfig }) {
   // Mientras no haya config, retornamos un div vacío (o un spinner)
   if (!mapConfig) {
     return <div style={{ height: "100%", width: "100%" }} />;
@@ -40,7 +41,19 @@ export default function Map({ overlay, mapConfig }) {
       <FitBounds bounds={bounds} />
 
       {/* Marcador en el centro del radar */}
-      {markerCenter && <Marker position={markerCenter} />}
+      {markerCenter && (
+        <Marker
+          position={markerCenter}
+          icon={L.icon({
+            iconUrl:
+              "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+            shadowUrl:
+              "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+          })}
+        >
+          <Popup>{markerCenter}</Popup>
+        </Marker>
+      )}
 
       {/* Capa de GIF */}
       {overlay && (
