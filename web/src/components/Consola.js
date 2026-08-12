@@ -77,14 +77,21 @@ export default function Consola({ catalogo: inicial }) {
   const archivo = useRef(null);
 
   /* Al cambiar el juego de sondeos (producto, ventana o refresco) se conserva
-     la posición: el último sondeo si se venía siguiendo en vivo. */
+     la posición: el último sondeo si se venía siguiendo en vivo.
+     El destino se calcula aquí y no dentro de setIdx: React ejecuta el updater
+     durante el render siguiente, cuando el efecto de abajo ya movió `enVivo`,
+     y la consola se quedaba clavada en el sondeo anterior. */
   useEffect(() => {
-    setIdx(() => {
-      if (frames.length === 0) return 0;
-      if (enVivo.current) return frames.length - 1;
-      const i = frames.findIndex((f) => f.file === archivo.current);
-      return i >= 0 ? i : frames.length - 1;
-    });
+    if (frames.length === 0) {
+      setIdx(0);
+      return;
+    }
+    if (enVivo.current) {
+      setIdx(frames.length - 1);
+      return;
+    }
+    const i = frames.findIndex((f) => f.file === archivo.current);
+    setIdx(i >= 0 ? i : frames.length - 1);
   }, [frames]);
 
   useEffect(() => {

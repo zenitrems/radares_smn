@@ -60,13 +60,19 @@ export default function ConsolaMosaico({ catalogo: inicial }) {
   const enVivo = useRef(true);
   const sello = useRef(null);
 
+  /* El destino se calcula fuera de setIdx: el updater se ejecuta durante el
+     render siguiente, cuando el efecto de abajo ya movió `enVivo`. */
   useEffect(() => {
-    setIdx(() => {
-      if (pasos.length === 0) return 0;
-      if (enVivo.current) return pasos.length - 1;
-      const i = pasos.findIndex((p) => p.t === sello.current);
-      return i >= 0 ? i : pasos.length - 1;
-    });
+    if (pasos.length === 0) {
+      setIdx(0);
+      return;
+    }
+    if (enVivo.current) {
+      setIdx(pasos.length - 1);
+      return;
+    }
+    const i = pasos.findIndex((p) => p.t === sello.current);
+    setIdx(i >= 0 ? i : pasos.length - 1);
   }, [pasos]);
 
   useEffect(() => {
