@@ -1,7 +1,10 @@
 /**
- * Escenario de la consola: mapa base oscuro + el GIF del sondeo colocado sobre
+ * Escenario de la consola: mapa base oscuro + los GIF de sondeo colocados sobre
  * sus `bounds` reales (los sondeos del SMN son PNG/GIF transparentes
  * georreferenciados, no imágenes planas), más las capas vectoriales del diseño.
+ *
+ * Acepta uno o varios sitios, de modo que la misma vista sirve para la consola
+ * de una estación y para el mosaico que combina las dos.
  */
 import { memo, useEffect, useMemo, useRef } from "react";
 import {
@@ -18,7 +21,6 @@ import L from "leaflet";
 import { CIUDADES, destino, rumbo } from "../lib/radar";
 
 const TILES = "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png";
-const TILES_LBL = "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png";
 const ATRIB =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a> · sondeos: SMN/CONAGUA';
 
@@ -27,19 +29,77 @@ const ESCALAS_KM = [1, 2, 5, 10, 20, 25, 50, 100, 150, 200, 250, 500, 1000];
 const icono = (className, html, size = [0, 0], anchor = [0, 0]) =>
   L.divIcon({ className, html, iconSize: size, iconAnchor: anchor });
 
-const limites = (producto) => L.latLngBounds(producto.map.bounds[0], producto.map.bounds[1]);
+const aLimites = (bounds) => L.latLngBounds(bounds[0], bounds[1]);
 
-/* Reencuadra al cambiar de producto o radar. */
-function AjusteVista({ producto }) {
+/* Reencuadra al cambiar de producto, de radar o de vista — pero no en cada
+   refresco del catálogo: este llega cada minuto con objetos `bounds` nuevos
+   aunque valgan lo mismo, y si se comparase por referencia se perdería el
+   zoom/posición que el usuario haya elegido a mano. */
+function AjusteVista({ bounds }) {
   const map = useMap();
+  const previa = useRef(null);
   useEffect(() => {
-    map.fitBounds(limites(producto), { padding: [8, 8], animate: false });
-  }, [map, producto]);
+    const clave = JSON.stringify(bounds);
+    if (previa.current === clave) return;
+    previa.current = clave;
+    map.fitBounds(aLimites(bounds), { padding: [8, 8], animate: false });
+  }, [map, bounds]);
   return null;
 }
 
-/* Lectura de cursor y barra de escala. */
-function Sensor({ radar, onCursor, onEscala }) {
+/* Botón para volver a encuadrar el sitio actual sin esperar a que cambie el
+   producto: útil después de que el usuario haya paneado o hecho zoom a mano. */
+function ControlCentrar({ bounds }) {
+  const map = useMap();
+  const previa = useRef(bounds);
+  previa.current = bounds;
+
+  useEffect(() => {
+    const Control = L.Control.extend({
+      onAdd() {
+        const div = L.DomUtil.create("div", "leaflet-bar leaflet-control");
+        const a = L.DomUtil.create("a", "", div);
+        a.href = "#";
+        a.title = "Centrar en el radar";
+        a.setAttribute("role", "button");
+        a.setAttribute("aria-label", "Centrar en el radar");
+        a.innerHTML =
+          '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="3.2"/><path d="M8 1v2.6M8 12.4V15M1 8h2.6M12.4 8H15"/></svg>';
+        L.DomEvent.disableClickPropagation(div);
+        L.DomEvent.on(a, "click", (e) => {
+          L.DomEvent.preventDefault(e);
+          map.fitBounds(aLimites(previa.current), { padding: [8, 8], animate: true });
+        });
+        return div;
+      },
+    });
+    const control = new Control({ position: "topleft" });
+    control.addTo(map);
+    return () => control.remove();
+  }, [map]);
+
+  return null;
+}
+
+/* Límite geográfico del escenario: por ahora no hace falta poder alejarse
+   hasta ver el planeta, solo la península y el alcance de los radares. */
+function LimiteMapa({ caja }) {
+  const map = useMap();
+  const limites = useMemo(() => aLimites(caja), [caja]);
+
+  useEffect(() => {
+    map.setMaxBounds(limites);
+    const ajustarZoomMinimo = () => map.setMinZoom(map.getBoundsZoom(limites, false));
+    ajustarZoomMinimo();
+    map.on("resize", ajustarZoomMinimo);
+    return () => map.off("resize", ajustarZoomMinimo);
+  }, [map, limites]);
+
+  return null;
+}
+
+/* Lectura de cursor (respecto al sitio más cercano) y barra de escala. */
+function Sensor({ sitios, onCursor, onEscala }) {
   const map = useMap();
 
   const medir = () => {
@@ -59,11 +119,15 @@ function Sensor({ radar, onCursor, onEscala }) {
     resize: medir,
     mousemove: (e) => {
       const { lat, lng } = e.latlng;
-      const { km, az } = rumbo(radar.markerCenter, [lat, lng]);
+      const cerca = sitios
+        .map((s) => ({ s, ...rumbo(s.radar.markerCenter, [lat, lng]) }))
+        .sort((a, b) => a.km - b.km)[0];
+      if (!cerca) return;
+      const sitio = sitios.length > 1 ? `${cerca.s.radar.estacion} · ` : "";
       onCursor(
-        `<b>${lat.toFixed(3)}°N ${Math.abs(lng).toFixed(3)}°W</b><br>${km.toFixed(0)} km · ${az.toFixed(
+        `<b>${lat.toFixed(3)}°N ${Math.abs(lng).toFixed(3)}°W</b><br>${sitio}${cerca.km.toFixed(
           0
-        )}° del sitio`
+        )} km · ${cerca.az.toFixed(0)}° del sitio`
       );
     },
     mouseout: () => onCursor(null),
@@ -74,50 +138,52 @@ function Sensor({ radar, onCursor, onEscala }) {
 
 /* Las capas vectoriales se memoizan: sin esto cada avance de sondeo recrearía
    los iconos y Leaflet reconstruiría el DOM de todos los marcadores. */
-const Anillos = memo(function Anillos({ radar, producto }) {
-  const centro = radar.markerCenter;
-  const rangos = [150, 300, 450].filter((r) => r <= producto.range);
-
+const Anillos = memo(function Anillos({ sitios }) {
   return (
     <>
-      {rangos.map((r) => (
-        <Circle
-          key={r}
-          center={centro}
-          radius={r * 1000}
-          interactive={false}
-          pathOptions={{
-            color: "rgba(245,165,36,.34)",
-            weight: 0.9,
-            fill: false,
-            dashArray: r === producto.range ? null : "4 5",
-          }}
-        />
-      ))}
-      {rangos.map((r) => (
-        <Marker
-          key={`lbl-${r}`}
-          position={destino(centro, r, 0)}
-          interactive={false}
-          keyboard={false}
-          icon={icono("mk-rotulo", `<b>${r} km</b>`)}
-        />
-      ))}
-      {[0, 45, 90, 135, 180, 225, 270, 315].map((az) => (
-        <Polyline
-          key={`az-${az}`}
-          positions={[centro, destino(centro, producto.range, az)]}
-          interactive={false}
-          pathOptions={{ color: "rgba(245,165,36,.10)", weight: 0.7 }}
-        />
-      ))}
+      {sitios.flatMap((s) => {
+        const centro = s.radar.markerCenter;
+        const rangos = [150, 300, 450].filter((r) => r <= s.producto.range);
+        return [
+          ...rangos.map((r) => (
+            <Circle
+              key={`${s.id}-c${r}`}
+              center={centro}
+              radius={r * 1000}
+              interactive={false}
+              pathOptions={{
+                color: "rgba(245,165,36,.34)",
+                weight: 0.9,
+                fill: false,
+                dashArray: r === s.producto.range ? null : "4 5",
+              }}
+            />
+          )),
+          ...rangos.map((r) => (
+            <Marker
+              key={`${s.id}-l${r}`}
+              position={destino(centro, r, 0)}
+              interactive={false}
+              keyboard={false}
+              icon={icono("mk-rotulo", `<b>${r} km</b>`)}
+            />
+          )),
+          ...[0, 45, 90, 135, 180, 225, 270, 315].map((az) => (
+            <Polyline
+              key={`${s.id}-a${az}`}
+              positions={[centro, destino(centro, s.producto.range, az)]}
+              interactive={false}
+              pathOptions={{ color: "rgba(245,165,36,.10)", weight: 0.7 }}
+            />
+          )),
+        ];
+      })}
     </>
   );
 });
 
-const Reticula = memo(function Reticula({ producto }) {
-  const [[n, w], [s, e]] = producto.map.bounds;
-  const paso = producto.range >= 450 ? 2 : 1;
+const Reticula = memo(function Reticula({ bounds, paso }) {
+  const [[n, w], [s, e]] = bounds;
   const norte = Math.max(n, s);
   const sur = Math.min(n, s);
   const oeste = Math.min(w, e);
@@ -176,8 +242,8 @@ const Reticula = memo(function Reticula({ producto }) {
   );
 });
 
-const Ciudades = memo(function Ciudades({ producto }) {
-  const visibles = CIUDADES.filter((c) => c.r === 1 || producto.range < 450);
+const Ciudades = memo(function Ciudades({ rango }) {
+  const visibles = CIUDADES.filter((c) => c.r === 1 || rango < 450);
   return (
     <>
       {visibles.map((c) => (
@@ -193,30 +259,34 @@ const Ciudades = memo(function Ciudades({ producto }) {
   );
 });
 
-export default function MapaRadar({
-  radar,
-  producto,
-  frames,
-  idx,
-  capas,
-  onCursor,
-  onEscala,
-  onListo,
-}) {
-  const bounds = useMemo(() => limites(producto), [producto]);
-  const iconoSitio = useMemo(
-    () =>
-      icono(
-        "mk-sitio",
-        `<i></i><b>${radar.showName.replace("Radar ", "").toUpperCase()}</b>`,
-        [12, 12],
-        [6, 6]
-      ),
-    [radar]
+const Sitios = memo(function Sitios({ sitios }) {
+  return (
+    <>
+      {sitios.map((s) => (
+        <Marker
+          key={s.id}
+          position={s.radar.markerCenter}
+          interactive={false}
+          keyboard={false}
+          icon={icono(
+            "mk-sitio",
+            `<i></i><b>${s.radar.showName.replace("Radar ", "").toUpperCase()}</b>`,
+            [12, 12],
+            [6, 6]
+          )}
+        />
+      ))}
+    </>
   );
+});
+
+/* Ecos de un sitio: solo se montan los sondeos vecinos al actual, porque cada
+   GIF son 2000×2000 px decodificados. El resto se precarga en caché. */
+function EcoSitio({ sitio }) {
+  const { producto, frames, idx } = sitio;
+  const bounds = useMemo(() => aLimites(producto.map.bounds), [producto]);
   const precargados = useRef(new Set());
 
-  /* Precarga en caché para que la reproducción no parpadee. */
   useEffect(() => {
     frames.forEach((f) => {
       if (precargados.current.has(f.src)) return;
@@ -226,7 +296,6 @@ export default function MapaRadar({
     });
   }, [frames]);
 
-  /* Solo se montan los sondeos vecinos: cada GIF son 2000×2000 px decodificados. */
   const montados = useMemo(() => {
     const s = new Set();
     if (frames.length === 0) return s;
@@ -237,44 +306,64 @@ export default function MapaRadar({
   }, [idx, frames.length]);
 
   return (
-    <MapContainer
-      center={producto.map.center}
-      zoom={producto.map.zoom ?? 8}
-      bounds={bounds}
-      zoomSnap={0.25}
-      zoomControl
-      attributionControl
-      preferCanvas
-      whenReady={onListo}
-      style={{ height: "100%", width: "100%" }}
-    >
-      {capas.base && (
-        <TileLayer url={TILES} attribution={ATRIB} subdomains="abcd" maxZoom={19} />
-      )}
-
+    <>
       {frames.map((f, i) =>
         montados.has(i) ? (
           <ImageOverlay
             key={f.src}
             url={f.src}
             bounds={bounds}
-            opacity={i === idx ? 1 : 0}
+            opacity={i === idx ? sitio.opacidad ?? 1 : 0}
             interactive={false}
             className="eco-overlay"
           />
         ) : null
       )}
+    </>
+  );
+}
 
-      {capas.etiquetas && <TileLayer url={TILES_LBL} subdomains="abcd" maxZoom={19} pane="shadowPane" />}
-      {capas.grid && <Reticula producto={producto} />}
-      {capas.anillos && <Anillos radar={radar} producto={producto} />}
-      {capas.ciudades && <Ciudades producto={producto} />}
-      {capas.sitio && (
-        <Marker position={radar.markerCenter} interactive={false} keyboard={false} icon={iconoSitio} />
-      )}
+export default function MapaRadar({ sitios, vista, caja, capas, onCursor, onEscala, onListo }) {
+  /* La geometría solo depende de qué sitios y productos hay, no del sondeo en
+     pantalla: se aísla del `idx` para que la reproducción no la redibuje. */
+  const clave = sitios.map((s) => `${s.id}:${s.producto.urlName}`).join("|");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const geo = useMemo(
+    () => sitios.map(({ id, radar, producto }) => ({ id, radar, producto })),
+    [clave]
+  );
+  const rangoMax = Math.max(...geo.map((s) => s.producto.range), 300);
+  const centroVista = useMemo(
+    () => [(vista[0][0] + vista[1][0]) / 2, (vista[0][1] + vista[1][1]) / 2],
+    [vista]
+  );
 
-      <AjusteVista producto={producto} />
-      <Sensor radar={radar} onCursor={onCursor} onEscala={onEscala} />
+  return (
+    <MapContainer
+      center={centroVista}
+      zoom={7}
+      bounds={aLimites(vista)}
+      zoomSnap={0.25}
+      zoomControl
+      attributionControl
+      preferCanvas
+      maxBoundsViscosity={1}
+      whenReady={onListo}
+      style={{ height: "100%", width: "100%" }}
+    >
+      {caja && <LimiteMapa caja={caja} />}
+      <ControlCentrar bounds={vista} />
+      {capas.base && <TileLayer url={TILES} attribution={ATRIB} subdomains="abcd" maxZoom={19} />}
+
+      {sitios.map((s) => (s.visible === false ? null : <EcoSitio key={s.id} sitio={s} />))}
+
+      {capas.grid && <Reticula bounds={vista} paso={rangoMax >= 450 ? 2 : 1} />}
+      {capas.anillos && <Anillos sitios={geo} />}
+      {capas.ciudades && <Ciudades rango={rangoMax} />}
+      {capas.sitio && <Sitios sitios={geo} />}
+
+      <AjusteVista bounds={vista} />
+      <Sensor sitios={sitios} onCursor={onCursor} onEscala={onEscala} />
     </MapContainer>
   );
 }

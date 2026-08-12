@@ -17,9 +17,10 @@ export const CIUDADES = [
   { n: "Ticul", c: [20.4, -89.53], r: 2 },
 ];
 
+/* Sin capa de etiquetas del mapa base: los topónimos que importan ya los pone
+   la capa de ciudades principales. */
 export const CAPAS = [
   { id: "base", lb: "Mapa base (oscuro)", on: true },
-  { id: "etiquetas", lb: "Etiquetas del mapa", on: true },
   { id: "anillos", lb: "Anillos de rango 150/300/450 km", on: true },
   { id: "sitio", lb: "Sitio del radar", on: true },
   { id: "ciudades", lb: "Ciudades principales", on: true },
@@ -35,6 +36,39 @@ export const VENTANAS = [
   { id: "3h", lb: "últimas 3 h", horas: 3 },
   { id: "1h", lb: "última hora", horas: 1 },
 ];
+
+/** Encuadre que cubre todos los `bounds` dados: [[norte,oeste],[sur,este]]. */
+export function unirLimites(listaBounds) {
+  const lats = listaBounds.flatMap((b) => [b[0][0], b[1][0]]);
+  const lons = listaBounds.flatMap((b) => [b[0][1], b[1][1]]);
+  return [
+    [Math.max(...lats), Math.min(...lons)],
+    [Math.min(...lats), Math.max(...lons)],
+  ];
+}
+
+/**
+ * Caja que acota el escenario a la península y el alcance de los radares del
+ * catálogo, con un margen de contexto: no hace falta poder alejarse hasta ver
+ * el planeta entero.
+ *
+ * El margen es proporcional al tamaño del encuadre (no un número fijo de
+ * grados): con un margen chico, el producto de mayor rango de un radar puede
+ * tocar casi el borde de la caja, y ahí `fitBounds` choca con `maxBounds` —
+ * Leaflet recorta el centro para no salirse y el mapa queda descentrado en
+ * vez de encuadrar el sitio. El margen amplio deja aire de sobra.
+ */
+export function limiteCatalogo(catalogo, margenFrac = 0.35) {
+  const bounds = catalogo.radars.flatMap((r) => r.products.map((p) => p.map.bounds));
+  if (bounds.length === 0) return null;
+  const [[n, w], [s, e]] = unirLimites(bounds);
+  const margenLat = (n - s) * margenFrac;
+  const margenLon = (e - w) * margenFrac;
+  return [
+    [n + margenLat, w - margenLon],
+    [s - margenLat, e + margenLon],
+  ];
+}
 
 export const KM_POR_GRADO_LAT = 110.57;
 export const KM_POR_GRADO_LON = 111.32;

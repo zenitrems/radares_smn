@@ -1,15 +1,19 @@
 /**
  * Lectura del catálogo de sondeos desde disco (solo servidor).
  *
- * `descarga_sondeos.py` guarda en public/sondeos/<ESTACIÓN>/<TIPO>/ y deriva
+ * `descarga_sondeos.py` guarda en <SONDEOS_DIR>/<ESTACIÓN>/<TIPO>/ y deriva
  * <TIPO> del nombre del archivo, así que aquí se aplica la misma regla sobre el
  * `filter` de radares.json para encontrar el directorio de cada producto.
+ *
+ * El directorio se recorre en cada petición y las imágenes se entregan por
+ * /api/sondeo, nunca desde public/: ver src/lib/almacen.js.
  */
 import fs from "fs";
 import path from "path";
 import radares from "../../radares.json";
+import { DIR_SONDEOS, urlDeSondeo } from "./almacen";
 
-const BASE = path.join(process.cwd(), "public", "sondeos");
+const BASE = DIR_SONDEOS;
 const RE_SONDEO = /_(\d{8})_(\d{6})\.gif$/;
 
 export const estacionDe = (filter) => filter.split("_")[0];
@@ -66,7 +70,7 @@ function framesDe(estacion, dir) {
   }
   return archivos
     .filter((f) => f.endsWith(".gif"))
-    .map((f) => ({ file: f, t: fechaDe(f), src: `/sondeos/${estacion}/${dir}/${f}` }))
+    .map((f) => ({ file: f, t: fechaDe(f), src: urlDeSondeo(estacion, dir, f) }))
     .filter((f) => f.t)
     .sort((a, b) => a.t.localeCompare(b.t));
 }

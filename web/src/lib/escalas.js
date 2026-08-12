@@ -2,7 +2,7 @@
  * Escalas de color de la consola.
  *
  * NOTA: estos valores vienen del diseño y son la escala de referencia del SMN.
- * Los GIF de `public/sondeos` traen su propia paleta indexada y difiere entre
+ * Los GIF de sondeo traen su propia paleta indexada y difiere entre
  * marcas (eec/Cancún usa ~11 tonos discretos; vaisala/Sabancuy una rampa
  * continua), así que la correspondencia color↔dBZ conviene verificarla contra
  * la leyenda oficial del visor del SMN antes de darla por definitiva.

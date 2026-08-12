@@ -9,6 +9,7 @@ import {
   fechaUtc,
   horaUtc,
   intervaloMediano,
+  limiteCatalogo,
   textoAntiguedad,
   minutosDesde,
   ventanaDeFrames,
@@ -48,7 +49,7 @@ export default function Consola({ catalogo: inicial }) {
   const [catalogo, setCatalogo] = useState(inicial);
   const [radarId, setRadarId] = useState(inicio.radarId);
   const [prodId, setProdId] = useState(inicio.prodId);
-  const [ventana, setVentana] = useState("todo");
+  const [ventana, setVentana] = useState("1h");
   const [idx, setIdx] = useState(inicio.idx);
   const [reproduciendo, setReproduciendo] = useState(false);
   const [velocidad, setVelocidad] = useState(1);
@@ -64,6 +65,13 @@ export default function Consola({ catalogo: inicial }) {
     () => (producto ? ventanaDeFrames(producto.frames, ventana) : []),
     [producto, ventana]
   );
+
+  const sitios = useMemo(
+    () => (radar && producto ? [{ id: radar.urlName, radar, producto, frames, idx }] : []),
+    [radar, producto, frames, idx]
+  );
+
+  const caja = useMemo(() => limiteCatalogo(catalogo), [catalogo]);
 
   const enVivo = useRef(true);
   const archivo = useRef(null);
@@ -173,7 +181,11 @@ export default function Consola({ catalogo: inicial }) {
 
   return (
     <div id="app">
-      <EncabezadoConsola ultimo={ultimo} intervalo={intervalo} />
+      <EncabezadoConsola
+        estaciones={[{ id: radar.estacion, ultimo }]}
+        intervalo={intervalo}
+        ruta="/"
+      />
 
       <PanelLateral
         radars={catalogo.radars}
@@ -188,10 +200,9 @@ export default function Consola({ catalogo: inicial }) {
       <main>
         <div id="stage">
           <MapaRadar
-            radar={radar}
-            producto={producto}
-            frames={frames}
-            idx={idx}
+            sitios={sitios}
+            vista={producto.map.bounds}
+            caja={caja}
             capas={capas}
             onCursor={setCursor}
             onEscala={setEscala}
@@ -227,7 +238,7 @@ export default function Consola({ catalogo: inicial }) {
             <div id="loading" className={sinDatos ? "err" : ""}>
               {sinDatos ? (
                 <div>
-                  SIN SONDEOS EN public/sondeos/{producto.estacion}/{producto.dir ?? "—"}
+                  SIN SONDEOS EN {producto.estacion}/{producto.dir ?? "—"}
                 </div>
               ) : (
                 <>

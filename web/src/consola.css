@@ -24,6 +24,13 @@ header{grid-column:1/-1;display:flex;align-items:center;gap:18px;padding:0 14px;
 .hdr-sep{width:1px;height:20px;background:var(--line)}
 .hdr-item{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:var(--txt-2);white-space:nowrap}
 .hdr-item b{color:var(--txt);font-weight:500}
+.hdr-sub{color:var(--txt-3);font-size:10px}
+.seg.nav a{display:grid;place-content:center;padding:0 10px;height:24px;font-family:var(--mono);
+  font-size:10.5px;color:var(--txt-3);letter-spacing:.08em;text-transform:uppercase;
+  border-right:1px solid var(--line-2)}
+.seg.nav a:last-child{border-right:none}
+.seg.nav a:hover{color:var(--txt)}
+.seg.nav a[aria-pressed="true"]{background:var(--panel-2);color:var(--accent)}
 .led{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px rgba(45,212,191,.14)}
 .led.warn{background:var(--accent);box-shadow:0 0 0 3px rgba(245,165,36,.14)}
 .led.off{background:var(--danger);box-shadow:0 0 0 3px rgba(255,93,77,.14)}
@@ -63,6 +70,11 @@ aside::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
 .prod .r2{font-family:var(--mono);font-size:10px;color:var(--txt-2);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
 .prod[aria-selected="true"] .t{color:#fff}
 .prod .vacio{color:var(--danger)}
+label.radar{cursor:pointer;user-select:none}
+label.radar[aria-selected="false"]{opacity:.62}
+label.radar[aria-selected="false"] .dot{background:var(--txt-3);box-shadow:none}
+.oculto{position:absolute;opacity:0;pointer-events:none}
+.ov-tr .ausente{color:var(--danger)}
 .prod:disabled{cursor:not-allowed;opacity:.72}
 
 .lyr{display:flex;align-items:center;gap:9px;padding:5px 10px;border-radius:3px;cursor:pointer;user-select:none}
@@ -90,6 +102,7 @@ main{position:relative;display:grid;grid-template-rows:1fr auto;min-width:0;min-
 .leaflet-control-attribution a{color:var(--txt-2)!important}
 .leaflet-bar a,.leaflet-bar a:hover{background:var(--panel-2);color:var(--txt-2);border-bottom-color:var(--line-2)}
 .leaflet-bar a:hover{color:var(--txt)}
+.leaflet-bar a{display:flex;align-items:center;justify-content:center}
 .leaflet-bar{border:1px solid var(--line-2);box-shadow:none}
 .leaflet-touch .leaflet-bar a:first-child{border-radius:3px 3px 0 0}
 .leaflet-touch .leaflet-bar a:last-child{border-radius:0 0 3px 3px}

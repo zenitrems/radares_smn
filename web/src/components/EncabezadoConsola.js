@@ -1,14 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { horaUtc, minutosDesde, pad, textoAntiguedad } from "../lib/radar";
 
 /** Umbral de "enlace activo": el SMN publica un sondeo cada ~6-10 min. */
 const MIN_ALERTA = 25;
 const MIN_CAIDO = 90;
 
-export default function EncabezadoConsola({ ultimo, intervalo }) {
+const VISTAS = [
+  { ruta: "/", lb: "estación" },
+  { ruta: "/mosaico", lb: "mosaico 450" },
+];
+
+const clase = (edad) =>
+  edad === null ? "warn" : edad < MIN_ALERTA ? "" : edad < MIN_CAIDO ? "warn" : "off";
+
+/**
+ * `estaciones`: [{ id, ultimo }] — una sola en la consola por estación, las dos
+ * en el mosaico.
+ */
+export default function EncabezadoConsola({ estaciones, intervalo, ruta }) {
   /* Todo lo que depende de la hora actual se calcula ya montado, para que el
      HTML del servidor y el del cliente coincidan. */
   const [reloj, setReloj] = useState(null);
+
+  /* Se depende del contenido de `estaciones`, no de su identidad, para no
+     reiniciar el intervalo en cada render del padre. */
+  const ref = useRef(estaciones);
+  ref.current = estaciones;
+  const clave = estaciones.map((e) => `${e.id}:${e.ultimo?.t ?? ""}`).join("|");
 
   useEffect(() => {
     const tic = () => {
@@ -16,24 +35,26 @@ export default function EncabezadoConsola({ ultimo, intervalo }) {
       setReloj({
         utc: `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`,
         loc: d.toLocaleTimeString("es-MX", { hour12: false, timeZone: "America/Mexico_City" }),
-        edad: ultimo ? minutosDesde(ultimo.t) : Infinity,
+        edades: ref.current.map((e) => (e.ultimo ? minutosDesde(e.ultimo.t) : Infinity)),
       });
     };
     tic();
     const id = setInterval(tic, 1000);
     return () => clearInterval(id);
-  }, [ultimo]);
+  }, [clave]);
 
-  const edad = reloj ? reloj.edad : null;
-  const estado = edad === null ? "warn" : edad < MIN_ALERTA ? "" : edad < MIN_CAIDO ? "warn" : "off";
+  const edadDe = (i) => (reloj && reloj.edades[i] !== undefined ? reloj.edades[i] : null);
+  const peor = reloj ? Math.max(...reloj.edades) : null;
   const textoEnlace =
-    edad === null
+    peor === null
       ? "verificando"
-      : edad < MIN_ALERTA
+      : peor < MIN_ALERTA
       ? "activo"
-      : edad < MIN_CAIDO
+      : peor < MIN_CAIDO
       ? "con retraso"
       : "sin datos nuevos";
+
+  const varias = estaciones.length > 1;
 
   return (
     <header>
@@ -42,21 +63,37 @@ export default function EncabezadoConsola({ ultimo, intervalo }) {
         <span>SMN · PENÍNSULA DE YUCATÁN</span>
       </div>
       <div className="hdr-sep" />
+
+      <div className="seg nav">
+        {VISTAS.map((v) => (
+          <Link key={v.ruta} href={v.ruta} aria-pressed={v.ruta === ruta}>
+            {v.lb}
+          </Link>
+        ))}
+      </div>
+
+      <div className="hdr-sep" />
       <div className="hdr-item">
-        <i className={`led ${estado}`} />
+        <i className={`led ${clase(peor)}`} />
         Enlace <b>{textoEnlace}</b>
       </div>
-      <div className="hdr-item">
-        Último sondeo <b>{ultimo ? `${horaUtc(ultimo.t)}Z` : "—"}</b>
-      </div>
-      <div className="hdr-item">
-        Latencia <b>{ultimo && edad !== null ? textoAntiguedad(edad).replace("hace ", "") : "—"}</b>
-      </div>
-      {intervalo ? (
+
+      {estaciones.map((e, i) => (
+        <div className="hdr-item" key={e.id}>
+          {varias ? <i className={`led ${clase(edadDe(i))}`} /> : null}
+          {varias ? e.id : "Último sondeo"} <b>{e.ultimo ? `${horaUtc(e.ultimo.t)}Z` : "—"}</b>
+          {edadDe(i) !== null && e.ultimo ? (
+            <span className="hdr-sub">{textoAntiguedad(edadDe(i))}</span>
+          ) : null}
+        </div>
+      ))}
+
+      {!varias && intervalo ? (
         <div className="hdr-item">
           Cadencia <b>{intervalo.toFixed(0)} min</b>
         </div>
       ) : null}
+
       <div className="spacer" />
       <div className="clock">
         <span>{reloj ? reloj.utc : "--:--:--"}</span>

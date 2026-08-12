@@ -14,7 +14,8 @@ import requests
 DEFAULT_ESTACIONES = ["CANC"]  # "CANC", "SABA"
 DEFAULT_RDA_REPOSITORY = "https://smn.conagua.gob.mx/tools/PHP/RDA/static/php/RDA_repository.php?dir=ecos&type=json"
 DEFAULT_GIF_REPOSITORY = "https://smn.conagua.gob.mx/tools/GUI/visor_radares_v3/ecos"
-DEFAULT_GIF_DIR_BASE = "web/public/sondeos"
+# Mismo directorio que sirve la web (src/lib/almacen.js); --gif-dir lo sobreescribe.
+DEFAULT_GIF_DIR_BASE = os.environ.get("SONDEOS_DIR", "web/public/sondeos")
 DEFAULT_ARCHIVE_DIR_BASE = "sondeos_archivo"
 DEFAULT_MAX_IMAGENES = 25
 DEFAULT_INTERVAL = 300
