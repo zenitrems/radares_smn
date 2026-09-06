@@ -1,6 +1,6 @@
 # radares SMN
 
-Descarga, almacenamiento y visualización de los productos de radar del Servicio Meteorológico Nacional (SMN) de México, con foco en la península de Yucatán.
+Descarga, almacenamiento y visualización de los productos de radar del Servicio Meteorológico Nacional (SMN), con foco en la península de Yucatán.
 
 ## Descarga de sondeos
 
@@ -20,61 +20,57 @@ En la web, `SONDEOS_DIR` puede ser absoluta o relativa al proceso de Node (que
 corre en `web/`), por ejemplo `SONDEOS_DIR=../sondeos`.
 
 ```bash
-export SONDEOS_DIR=/ruta/a/sondeos
+# web/.env.local
+SONDEOS_DIR=../sondeos
+NEXT_PUBLIC_MAPBOX_TOKEN=
+```
+
+```bash
 npm install
 npm run dev
 ```
 
 ## Capas del INEGI
 
-El escenario se dibuja con GeoJSON propios, no con teselas: así no depende de
-ningún servicio externo y nada compite con los ecos. Todos salen del WFS del
-INEGI —no del WMS del visor, que sólo entrega imágenes ya pintadas y no se puede
-colorear municipio a municipio:
+El escenario se dibuja con GeoJSON del servicio WFS, filtrados y recortados con `descarga_inegi.py`. Se guardan en `web/public/geo/` y se declaran en `web/src/mapa/capas.json`.
 
 ```bash
 python descarga_inegi.py                    # las capas activas
 python descarga_inegi.py aeropuertos        # también las desactivadas, por nombre
 ```
 
-| capa | features | archivo en `web/public/geo/` |
-|---|---|---|
-| `municipios` | 271 | `municipios_sureste.geojson` · 6.6 MB |
-| `localidades` | 6807 | `localidades_sureste.geojson` · 1.8 MB |
-| `costa` | 162 | `costa_sureste.geojson` · 0.09 MB |
-| `aeropuertos` *(descarga desactivada)* | 13 | `aeropuertos_peninsula.geojson` · 4 KB |
+| capa                                   | features | archivo en `web/public/geo/`           |
+| -------------------------------------- | -------- | -------------------------------------- |
+| `municipios`                           | 271      | `municipios_sureste.geojson` · 6.6 MB  |
+| `localidades`                          | 6807     | `localidades_sureste.geojson` · 1.8 MB |
+| `costa`                                | 162      | `costa_sureste.geojson` · 0.09 MB      |
+| `aeropuertos` _(descarga desactivada)_ | 13       | `aeropuertos_peninsula.geojson` · 4 KB |
 
-Cubren cinco entidades —Campeche (04), Chiapas (07), Quintana Roo (23), Tabasco
-(27) y Yucatán (31)—: los productos de 450 km de Sabancuy llegan hasta ahí y la
-lluvia que cae también hay que poder atribuirla a un municipio. Municipios y
-localidades se filtran por `CVE_ENT`; costa y aeropuertos, que no la traen útil,
+Municipios y localidades se filtran por `CVE_ENT`; costa y aeropuertos, que no la traen útil,
 se recortan con la caja del escenario.
-
-La descarga de `aeropuertos` está desactivada (`"activa": False`): el archivo se
-conserva y la capa sigue funcionando: por eso mantiene el nombre `_peninsula`,
-que es el recorte con el que se generó.
 
 Las localidades llegan como la traza de su mancha urbana. El script guarda el
 centroide y el área, que a falta de población en el WFS es el único criterio
-objetivo para decidir a qué zoom aparece cada rótulo, siempre acotado al
-encuadre visible y a un tope de 90 marcadores.
+objetivo para decidir a qué zoom aparece cada rótulo. Los umbrales por zoom
+están en `web/src/components/CapaLocalidades.js` y son deliberadamente
+generosos: de lo que sobre se encarga el _decluttering_ de OpenLayers, que
+descarta el rótulo que se solapa con otro y da preferencia a la localidad de
+mayor mancha urbana.
 
-## Mapas base
+## El escenario
 
-Además de los vectores, la consola puede poner teselas por debajo. El catálogo
-está en `web/src/lib/mapas.js` y añadir un proveedor es una entrada más. Por
-omisión no hay ninguno.
+El mapa es **OpenLayers**. `web/src/components/MapaRadar.js` crea el `ol/Map` y
+declara como hijos lo que hay encima; cada `Capa*` da de alta su capa OL
+mientras esté montada y no pinta DOM. El poco pegamento con React —el contexto
+del mapa y `useCapa`— está en `web/src/mapa/`, junto con la conversión de
+coordenadas (`geo.js`), el orden de apilado y los estilos de los rótulos
+(`estilos.js`), que se dibujan en el lienzo y no en CSS.
 
-```bash
-# web/.env.local  (ignorado por git)
-NEXT_PUBLIC_MAPBOX_TOKEN=pk.eyJ...
-```
-
-## Panel y arranque
-
-El panel lateral se pliega con el botón del encabezado o con la tecla **P**. La
-consola arranca en **Cancún / CMAX**; si ese producto no tiene sondeos en disco,
-cae al más reciente que haya.
+Los sondeos se colocan como `ImageStatic` sobre el extent del producto, ya en la
+proyección de la vista: son recortes en Mercator, así que no hay reproyección
+que pagar. Hay una capa por sitio y lo que se cambia al avanzar el reproductor
+es su fuente; se conservan vivas las de los sondeos vecinos y las de los
+extremos, que es adonde salta el reproductor al terminar.
 
 Para el mapeo de lluvia, `MapaRadar` acepta `lluvia`: un objeto **CVEGEO → mm·h⁻¹**
 con la clave de 5 dígitos del INEGI. Los municipios con dato se rellenan con la
