@@ -112,20 +112,35 @@ label.radar[aria-selected="false"] .dot{background:var(--txt-3);box-shadow:none}
 /* ── escenario ── */
 main{position:relative;display:grid;grid-template-rows:1fr auto;min-width:0;min-height:0}
 #stage{position:relative;overflow:hidden;background:#070A0C;min-height:0}
-#stage .leaflet-container{position:absolute;inset:0;width:100%;height:100%;background:#070A0C;
-  font-family:var(--mono);outline:none}
-.leaflet-control-attribution{background:rgba(11,14,17,.72)!important;color:var(--txt-3)!important;
-  font-size:9px!important;letter-spacing:.04em}
-.leaflet-control-attribution a{color:var(--txt-2)!important}
-.leaflet-bar a,.leaflet-bar a:hover{background:var(--panel-2);color:var(--txt-2);border-bottom-color:var(--line-2)}
-.leaflet-bar a:hover{color:var(--txt)}
-.leaflet-bar a{display:flex;align-items:center;justify-content:center}
-.leaflet-bar{border:1px solid var(--line-2);box-shadow:none}
-.leaflet-touch .leaflet-bar a:first-child{border-radius:3px 3px 0 0}
-.leaflet-touch .leaflet-bar a:last-child{border-radius:0 0 3px 3px}
-.eco-overlay{image-rendering:auto}
+#stage .mapa{position:absolute;inset:0;background:#070A0C;font-family:var(--mono)}
+.mapa .ol-viewport{outline:none}
+
+/* Controles de OpenLayers en el registro de la consola: cuadrados, oscuros y
+   del mismo cuerpo que los botones del reproductor. */
+.mapa .ol-control{background:none;padding:0;border-radius:0}
+.mapa .ol-control button{display:flex;align-items:center;justify-content:center;width:26px;height:26px;
+  margin:0;font:400 15px/1 var(--mono);color:var(--txt-2);background:var(--panel-2);
+  border:1px solid var(--line-2);border-radius:0}
+.mapa .ol-control button:hover,.mapa .ol-control button:focus{outline:none;color:var(--txt);border-color:var(--txt-3)}
+/* Bajo el rótulo del producto: la esquina superior izquierda ya la ocupa `.ov-tl`. */
+.mapa .ol-zoom{top:64px;left:10px}
+.mapa .ol-zoom .ol-zoom-in{border-radius:3px 3px 0 0}
+.mapa .ol-zoom .ol-zoom-out{border-top:none;border-radius:0 0 3px 3px}
+.mapa .ol-centrar{top:124px;left:10px}
+.mapa .ol-centrar button{border-radius:3px}
+.mapa .ol-attribution{bottom:0;right:0}
+/* Sin plegar no hay nada que plegar: el botón de ol.css sobra, y la regla que
+   lo esconde la pisaría la de los botones de control de aquí arriba. */
+.mapa .ol-attribution button{display:none}
+.mapa .ol-attribution.ol-uncollapsible,.mapa .ol-attribution:not(.ol-collapsed){
+  background:rgba(11,14,17,.72);border-radius:3px 0 0 0}
+.mapa .ol-attribution ul{padding:2px 6px;font-size:9px;letter-spacing:.04em;color:var(--txt-3);text-shadow:none}
+.mapa .ol-attribution a{color:var(--txt-2)}
 
 /* ── división municipal ── */
+/* El rótulo es un `Overlay` que sigue al puntero: si capturase el ratón se
+   taparía a sí mismo el municipio y parpadearía. */
+.tt-capa{pointer-events:none!important}
 .tt-municipio{background:rgba(17,22,27,.94);border:1px solid var(--line-2);border-radius:3px;
   padding:5px 8px;color:var(--txt);font-family:var(--mono);font-size:10.5px;line-height:1.55;
   box-shadow:none;white-space:nowrap}
@@ -133,29 +148,6 @@ main{position:relative;display:grid;grid-template-rows:1fr auto;min-width:0;min-
 .tt-municipio span{display:block;color:var(--txt-3);font-size:9.5px;letter-spacing:.06em}
 .tt-municipio i{display:block;font-style:normal;color:var(--accent);margin-top:2px}
 .tt-municipio i.sin{color:var(--txt-3)}
-.tt-municipio:before{display:none}
-
-.mk-sitio,.mk-ciudad,.mk-rotulo{background:none;border:none}
-.mk-sitio i{display:block;width:12px;height:12px;background:var(--teal);transform:rotate(45deg);
-  box-shadow:0 0 0 5px rgba(45,212,191,.14)}
-.mk-sitio b{position:absolute;left:16px;top:-16px;font-family:var(--mono);font-size:10px;font-weight:400;
-  letter-spacing:.1em;color:var(--teal);white-space:nowrap;
-  text-shadow:0 0 3px #070A0C,0 0 3px #070A0C}
-.mk-ciudad i{position:absolute;left:0;top:0;width:3px;height:3px;background:#7b8d9a}
-.mk-ciudad b{position:absolute;left:6px;top:-6px;font-family:var(--sans);font-size:9.5px;font-weight:400;
-  color:#7b8d9a;white-space:nowrap;text-shadow:0 0 3px #070A0C,0 0 3px #070A0C}
-.mk-ciudad.pri i{background:#dbe6ee;width:4px;height:4px}
-.mk-ciudad.pri b{color:#c9d6e0;font-size:10.5px;left:8px}
-.mk-aero{background:none;border:none}
-.mk-aero i{position:absolute;left:0;top:0;width:0;height:0;border-left:4px solid transparent;
-  border-right:4px solid transparent;border-bottom:7px solid var(--accent);opacity:.75}
-.mk-aero b{position:absolute;left:11px;top:-4px;font-family:var(--mono);font-size:9px;font-weight:400;
-  letter-spacing:.06em;color:var(--accent);opacity:.85;white-space:nowrap;
-  text-shadow:0 0 3px #070A0C,0 0 3px #070A0C}
-.mk-rotulo b,.mk-grid b{position:absolute;left:4px;top:2px;font-family:var(--mono);font-size:9px;
-  font-weight:400;white-space:nowrap;text-shadow:0 0 3px #070A0C,0 0 3px #070A0C}
-.mk-rotulo b{color:rgba(122,166,224,.72)}
-.mk-grid b{color:#3d505d}
 
 .ov{position:absolute;pointer-events:none;font-family:var(--mono);z-index:1000}
 .ov-tl{top:10px;left:12px;font-size:10.5px;line-height:1.6;color:var(--txt-2);letter-spacing:.06em}

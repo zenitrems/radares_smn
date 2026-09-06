@@ -57,10 +57,9 @@ export function unirLimites(listaBounds) {
  * catálogo, con un margen de contexto.
  *
  * El margen es proporcional al tamaño del encuadre (no un número fijo de
- * grados): con un margen chico, el producto de mayor rango de un radar puede
- * tocar casi el borde de la caja, y ahí `fitBounds` choca con `maxBounds` —
- * Leaflet recorta el centro para no salirse y el mapa queda descentrado en
- * vez de encuadrar el sitio.
+ * grados): la caja es el `extent` de la vista y con un margen chico el producto
+ * de mayor rango de un radar la llenaría casi entera, dejando al usuario sin
+ * sitio adonde panear en cuanto se acercase un poco.
  */
 export function limiteCatalogo(catalogo, margenFrac = 0.35) {
   const bounds = catalogo.radars.flatMap((r) => r.products.map((p) => p.map.bounds));

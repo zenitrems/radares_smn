@@ -8,6 +8,10 @@ const TOKEN_MAPBOX = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
  * Teselas rasterizadas de un estilo de Mapbox. `estilo` es la parte del
  * `mapbox://styles/…` que sigue al esquema: 'mapbox/satellite-v9' para los
  * estilos de casa, 'usuario/id' para uno propio.
+ *
+ * Se piden de 512 y a @2x: `tileSize` dice cuánto mapa cubre cada tesela y
+ * `tilePixelRatio` cuántos píxeles de imagen trae, que es como OpenLayers
+ * describe una tesela retina.
  */
 const mapbox = (estilo) =>
   `https://api.mapbox.com/styles/v1/${estilo}/tiles/512/{z}/{x}/{y}@2x?access_token=${TOKEN_MAPBOX}`;
@@ -29,7 +33,7 @@ export const MAPAS = [
     url: mapbox("zenlab/cmtplnn6b007501qrfroxgtbu"),
     attribution: ATRIB_MAPBOX,
     tileSize: 512,
-    zoomOffset: -1,
+    tilePixelRatio: 2,
     maxZoom: 20,
     token: "mapbox",
   },
@@ -40,7 +44,7 @@ export const MAPAS = [
     url: mapbox("mapbox/satellite-v9"),
     attribution: ATRIB_MAPBOX,
     tileSize: 512,
-    zoomOffset: -1,
+    tilePixelRatio: 2,
     maxZoom: 20,
     opacity: 0.72,
     token: "mapbox",
