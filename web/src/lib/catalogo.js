@@ -6,7 +6,7 @@
  * `filter` de radares.json para encontrar el directorio de cada producto.
  *
  * El directorio se recorre en cada petición y las imágenes se entregan por
- * /api/sondeo, nunca desde public/: ver src/lib/almacen.js.
+ * /api/sondeo.
  */
 import fs from "fs";
 import path from "path";

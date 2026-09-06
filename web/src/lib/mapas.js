@@ -1,17 +1,7 @@
 /**
  * Catálogo de mapas base.
- *
- * La consola nació sin mapa base —sólo los vectores del INEGI— y esa sigue
- * siendo la opción por omisión: no depende de ningún servicio externo y nada
- * compite con los ecos. El satélite se añade como alternativa para reconocer
- * terreno, costa y manchas urbanas bajo la lluvia.
- *
- * Para agregar otro basta una entrada más: `url` con las plantillas de Leaflet
- * y, si el proveedor lo pide, `tileSize`/`zoomOffset` (Mapbox sirve teselas de
- * 512 px, que en Leaflet equivalen a un nivel de zoom menos).
  */
 
-/* Inline en el bundle al construir: por eso el prefijo NEXT_PUBLIC_. */
 const TOKEN_MAPBOX = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 /**

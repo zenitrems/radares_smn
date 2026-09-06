@@ -3,13 +3,6 @@
  * reales (los sondeos del SMN son PNG/GIF transparentes georreferenciados, no
  * imágenes planas), más las capas vectoriales del diseño.
  *
- * Por omisión no hay mapa base de teselas: la referencia geográfica la dan las
- * capas del INEGI, así que el escenario no depende de ningún servicio externo y
- * el fondo queda en el negro de la consola. El satélite y lo que se añada al
- * catálogo de lib/mapas entran por debajo de todo, atenuados.
- *
- * Acepta uno o varios sitios, de modo que la misma vista sirve para la consola
- * de una estación y para el mosaico que combina las dos.
  */
 import { memo, useEffect, useMemo, useRef } from "react";
 import {
@@ -113,8 +106,7 @@ function LimiteMapa({ caja }) {
 }
 
 /* El panel lateral se pliega, y Leaflet no se entera: su evento `resize` viene
-   de la ventana, no del contenedor. Sin esto el mapa queda con el ancho viejo
-   —franja gris a un lado y coordenadas desplazadas— hasta el siguiente zoom. */
+   de la ventana, no del contenedor. */
 function AjusteTamaño() {
   const map = useMap();
   useEffect(() => {

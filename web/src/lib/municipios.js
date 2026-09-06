@@ -1,6 +1,6 @@
 /**
+ * WIP
  * Escala de lluvia por municipio.
- *
  * Los municipios se identifican por CVEGEO, la clave de 5 dígitos del INEGI
  * (entidad + municipio) con la que se cruza cualquier tabla del propio INEGI o
  * de CONAGUA. La geometría la carga lib/inegi.

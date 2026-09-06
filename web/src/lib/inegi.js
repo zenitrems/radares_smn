@@ -2,8 +2,7 @@
  * Acceso a las capas del INEGI que sirven de referencia geográfica.
  *
  * Los archivos los genera `descarga_inegi.py` desde el WFS del INEGI y Next los
- * sirve como assets estáticos. Se cargan bajo demanda —sólo cuando su casilla
- * está encendida— y una única vez por sesión: entre municipios y localidades
+ * sirve como assets estáticos. Se cargan bajo demanda y una única vez por sesión: entre municipios y localidades
  * son más de 3 MB, y la consola monta el mapa dos veces (consola y mosaico).
  */
 import { useEffect, useState } from "react";

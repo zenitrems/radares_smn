@@ -1,14 +1,5 @@
 /**
- * Dónde viven los sondeos en disco y cómo se resuelve su ruta (solo servidor).
- *
- * No se sirven desde `public/`: Next fija el contenido de esa carpeta al
- * construir, así que los sondeos que `descarga_sondeos.py` deja después del
- * build no llegarían al navegador. El directorio se lee en cada petición y las
- * imágenes salen por /api/sondeo/<ESTACIÓN>/<TIPO>/<ARCHIVO>.
- *
- * `SONDEOS_DIR` permite apuntar a cualquier ruta (absoluta o relativa al
- * proceso); si no se define se mantiene la ubicación histórica, de modo que
- * nada se rompe mientras se mueve la descarga fuera del repositorio.
+ * Resolver las rutas de los sondeos en el disco y sus URLs, y determinar el tipo MIME real de cada archivo.
  */
 import fs from "fs";
 import path from "path";

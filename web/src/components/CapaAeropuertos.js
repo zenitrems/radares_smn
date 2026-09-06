@@ -1,9 +1,6 @@
 /**
- * Aeropuertos del INEGI dentro del escenario.
+ * Capa de aeropuertos
  *
- * Son trece y no cambian: se rotula el nombre corto (el campo `nombre` del
- * INEGI viene 'N/D' en casi todos, así que el script guarda el nombre completo
- * y aquí se recorta el prefijo protocolario).
  */
 import { memo } from "react";
 import { Marker } from "react-leaflet";

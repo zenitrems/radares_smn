@@ -4,8 +4,7 @@
  * Sabancuy y Cancún no sondean a la vez ni a la misma cadencia (~10 y ~8 min),
  * así que no hay instantes comunes: se construye un eje con los instantes de
  * ambas y en cada paso cada estación muestra su sondeo más cercano, siempre que
- * caiga dentro de la tolerancia. Fuera de ella la estación no pinta nada, en
- * lugar de arrastrar un eco viejo sobre el mapa.
+ * caiga dentro de la tolerancia.
  */
 export const PRODUCTO_MOSAICO = 450;
 export const TOLERANCIA_MIN = 12;

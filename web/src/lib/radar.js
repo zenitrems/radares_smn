@@ -15,7 +15,7 @@ export const GRUPOS_CAPAS = [
       { id: "municipios", lb: "División municipal", on: true },
       { id: "costa", lb: "Línea de costa y frontera", on: true },
       { id: "localidades", lb: "Localidades", on: true },
-      { id: "aeropuertos", lb: "Aeropuertos", on: false },
+      { id: "aeropuertos", lb: "Aeropuertos", on: true },
     ],
   },
   {
@@ -24,7 +24,7 @@ export const GRUPOS_CAPAS = [
     capas: [
       { id: "anillos", lb: "Anillos de rango 150/300/450 km", on: true },
       { id: "sitio", lb: "Sitio del radar", on: true },
-      { id: "grid", lb: "Retícula lat/lon", on: true },
+      { id: "grid", lb: "Retícula lat/lon", on: false },
       { id: "escala", lb: "Escala de color", on: true },
     ],
   },
@@ -54,14 +54,13 @@ export function unirLimites(listaBounds) {
 
 /**
  * Caja que acota el escenario a la península y el alcance de los radares del
- * catálogo, con un margen de contexto: no hace falta poder alejarse hasta ver
- * el planeta entero.
+ * catálogo, con un margen de contexto.
  *
  * El margen es proporcional al tamaño del encuadre (no un número fijo de
  * grados): con un margen chico, el producto de mayor rango de un radar puede
  * tocar casi el borde de la caja, y ahí `fitBounds` choca con `maxBounds` —
  * Leaflet recorta el centro para no salirse y el mapa queda descentrado en
- * vez de encuadrar el sitio. El margen amplio deja aire de sobra.
+ * vez de encuadrar el sitio.
  */
 export function limiteCatalogo(catalogo, margenFrac = 0.35) {
   const bounds = catalogo.radars.flatMap((r) => r.products.map((p) => p.map.bounds));
