@@ -7,12 +7,13 @@
  * municipio — `lluvia` es un objeto CVEGEO → mm·h⁻¹ y los municipios con dato
  * se rellenan con la escala del SMN.
  *
- * El GeoJSON se carga una vez por sesión (lib/municipios) y se monta sólo
- * cuando la casilla está encendida, porque son 2.7 MB y ~145 mil vértices.
+ * El GeoJSON se carga una vez por sesión (lib/inegi) y se monta sólo cuando la
+ * casilla está encendida, porque son 2.7 MB y ~145 mil vértices.
  */
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import { GeoJSON } from "react-leaflet";
-import { cargaMunicipios, tramoDeLluvia } from "../lib/municipios";
+import { RUTAS, useGeo } from "../lib/inegi";
+import { tramoDeLluvia } from "../lib/municipios";
 
 const TRAZO = "rgba(138,172,202,.62)";
 const TRAZO_ACTIVO = "#2DD4BF";
@@ -44,7 +45,7 @@ const rotulo = (props, mm) => {
 };
 
 function CapaMunicipios({ lluvia, onMunicipio }) {
-  const [geo, setGeo] = useState(null);
+  const geo = useGeo(RUTAS.municipios);
   const capa = useRef(null);
 
   /* `lluvia` en una ref además del estado: los manejadores se registran una
@@ -63,18 +64,6 @@ function CapaMunicipios({ lluvia, onMunicipio }) {
      mapa, y la consola re-renderiza con cada movimiento del cursor (la lectura
      de posición del encabezado), así que el contorno no llegaba a verse. */
   const estilo = useCallback((f) => estiloDe(f, lluvia), [lluvia]);
-
-  useEffect(() => {
-    let vivo = true;
-    cargaMunicipios()
-      .then((fc) => vivo && setGeo(fc))
-      .catch(() => {
-        /* la consola es útil sin la capa: no se interrumpe el resto del mapa */
-      });
-    return () => {
-      vivo = false;
-    };
-  }, []);
 
   /* Recolorea al llegar datos nuevos sin volver a montar los 130 polígonos. */
   useEffect(() => {

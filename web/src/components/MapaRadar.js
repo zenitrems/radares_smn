@@ -22,8 +22,11 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
+import CapaAeropuertos from "./CapaAeropuertos";
+import CapaCosta from "./CapaCosta";
+import CapaLocalidades from "./CapaLocalidades";
 import CapaMunicipios from "./CapaMunicipios";
-import { CIUDADES, destino, rumbo } from "../lib/radar";
+import { destino, rumbo } from "../lib/radar";
 
 /* Instrumentación del radar: anillos y radiales en el azul de la consola, a
    baja opacidad para no competir con los ecos. */
@@ -252,23 +255,6 @@ const Reticula = memo(function Reticula({ bounds, paso }) {
   );
 });
 
-const Ciudades = memo(function Ciudades({ rango }) {
-  const visibles = CIUDADES.filter((c) => c.r === 1 || rango < 450);
-  return (
-    <>
-      {visibles.map((c) => (
-        <Marker
-          key={c.n}
-          position={c.c}
-          interactive={false}
-          keyboard={false}
-          icon={icono(`mk-ciudad${c.r === 1 ? " pri" : ""}`, `<i></i><b>${c.n}</b>`)}
-        />
-      ))}
-    </>
-  );
-});
-
 const Sitios = memo(function Sitios({ sitios }) {
   return (
     <>
@@ -376,11 +362,13 @@ export default function MapaRadar({
 
       {sitios.map((s) => (s.visible === false ? null : <EcoSitio key={s.id} sitio={s} />))}
 
+      {capas.costa && <CapaCosta />}
       {capas.municipios && <CapaMunicipios lluvia={lluvia} onMunicipio={onMunicipio} />}
 
       {capas.grid && <Reticula bounds={vista} paso={rangoMax >= 450 ? 2 : 1} />}
       {capas.anillos && <Anillos sitios={geo} />}
-      {capas.ciudades && <Ciudades rango={rangoMax} />}
+      {capas.localidades && <CapaLocalidades />}
+      {capas.aeropuertos && <CapaAeropuertos />}
       {capas.sitio && <Sitios sitios={geo} />}
 
       <AjusteVista bounds={vista} />

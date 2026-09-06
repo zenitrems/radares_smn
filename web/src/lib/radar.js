@@ -1,29 +1,15 @@
 /* Constantes de la consola y utilidades geográficas compartidas. */
 
-export const CIUDADES = [
-  { n: "Mérida", c: [20.97, -89.62], r: 1 },
-  { n: "Cancún", c: [21.16, -86.85], r: 1 },
-  { n: "Campeche", c: [19.84, -90.53], r: 1 },
-  { n: "Chetumal", c: [18.5, -88.3], r: 1 },
-  { n: "Cd. del Carmen", c: [18.65, -91.8], r: 2 },
-  { n: "Playa del Carmen", c: [20.63, -87.07], r: 2 },
-  { n: "Valladolid", c: [20.69, -88.2], r: 2 },
-  { n: "Cozumel", c: [20.51, -86.95], r: 2 },
-  { n: "Tulum", c: [20.21, -87.46], r: 2 },
-  { n: "Progreso", c: [21.28, -89.66], r: 2 },
-  { n: "Escárcega", c: [18.61, -90.74], r: 2 },
-  { n: "Tizimín", c: [21.14, -88.15], r: 2 },
-  { n: "F. Carrillo Puerto", c: [19.58, -88.05], r: 2 },
-  { n: "Ticul", c: [20.4, -89.53], r: 2 },
-];
 
-/* Sin mapa base de teselas: la referencia territorial es la división municipal
-   del INEGI y los topónimos los pone la capa de ciudades principales. */
+/* Sin mapa base de teselas: la referencia geográfica son las capas del INEGI
+   que baja `descarga_inegi.py`. */
 export const CAPAS = [
   { id: "anillos", lb: "Anillos de rango 150/300/450 km", on: true },
   { id: "sitio", lb: "Sitio del radar", on: true },
-  { id: "ciudades", lb: "Ciudades principales", on: true },
   { id: "municipios", lb: "División municipal", on: true },
+  { id: "costa", lb: "Línea de costa y frontera", on: true },
+  { id: "localidades", lb: "Localidades", on: true },
+  { id: "aeropuertos", lb: "Aeropuertos", on: false },
   { id: "grid", lb: "Retícula lat/lon", on: true },
   { id: "escala", lb: "Escala de color", on: true },
 ];

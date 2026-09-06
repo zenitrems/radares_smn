@@ -130,6 +130,12 @@ main{position:relative;display:grid;grid-template-rows:1fr auto;min-width:0;min-
   color:#7b8d9a;white-space:nowrap;text-shadow:0 0 3px #070A0C,0 0 3px #070A0C}
 .mk-ciudad.pri i{background:#dbe6ee;width:4px;height:4px}
 .mk-ciudad.pri b{color:#c9d6e0;font-size:10.5px;left:8px}
+.mk-aero{background:none;border:none}
+.mk-aero i{position:absolute;left:0;top:0;width:0;height:0;border-left:4px solid transparent;
+  border-right:4px solid transparent;border-bottom:7px solid var(--accent);opacity:.75}
+.mk-aero b{position:absolute;left:11px;top:-4px;font-family:var(--mono);font-size:9px;font-weight:400;
+  letter-spacing:.06em;color:var(--accent);opacity:.85;white-space:nowrap;
+  text-shadow:0 0 3px #070A0C,0 0 3px #070A0C}
 .mk-rotulo b,.mk-grid b{position:absolute;left:4px;top:2px;font-family:var(--mono);font-size:9px;
   font-weight:400;white-space:nowrap;text-shadow:0 0 3px #070A0C,0 0 3px #070A0C}
 .mk-rotulo b{color:rgba(122,166,224,.72)}
