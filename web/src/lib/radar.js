@@ -17,13 +17,13 @@ export const CIUDADES = [
   { n: "Ticul", c: [20.4, -89.53], r: 2 },
 ];
 
-/* Sin capa de etiquetas del mapa base: los topónimos que importan ya los pone
-   la capa de ciudades principales. */
+/* Sin mapa base de teselas: la referencia territorial es la división municipal
+   del INEGI y los topónimos los pone la capa de ciudades principales. */
 export const CAPAS = [
-  { id: "base", lb: "Mapa base (oscuro)", on: true },
   { id: "anillos", lb: "Anillos de rango 150/300/450 km", on: true },
   { id: "sitio", lb: "Sitio del radar", on: true },
   { id: "ciudades", lb: "Ciudades principales", on: true },
+  { id: "municipios", lb: "División municipal", on: true },
   { id: "grid", lb: "Retícula lat/lon", on: true },
   { id: "escala", lb: "Escala de color", on: true },
 ];

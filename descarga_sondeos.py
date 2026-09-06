@@ -110,7 +110,9 @@ def descargar_y_guardar_sondeos(sondeos: List[str], config: DescargaConfig) -> N
         estacion = sondeo.split("_")[0]
         tipo = extraer_tipo_sondeo(sondeo)
         momento = extraer_fecha_hora(sondeo)
-        momento_str = momento.strftime("%Y-%m-%d %H:%M:%S") if momento else "desconocida"
+        momento_str = (
+            momento.strftime("%Y-%m-%d %H:%M:%S") if momento else "desconocida"
+        )
 
         # directorio donde se guardan las últimas imágenes para el GIF
         directorio = os.path.join(config.gif_dir_base, estacion, tipo)
@@ -203,7 +205,9 @@ def construir_parser() -> argparse.ArgumentParser:
         choices=["DEBUG", "INFO", "WARNING", "ERROR"],
         help="Nivel de detalle del log",
     )
-    parser.add_argument("--log-file", help="Ruta opcional para además escribir el log en un archivo")
+    parser.add_argument(
+        "--log-file", help="Ruta opcional para además escribir el log en un archivo"
+    )
     return parser
 
 
@@ -247,7 +251,10 @@ def main() -> None:
     else:
         while True:
             get_sondeo_radares(config)
-            logger.info("En espera de %d segundos hasta la próxima verificación", config.interval)
+            logger.info(
+                "En espera de %d segundos hasta la próxima verificación",
+                config.interval,
+            )
             time.sleep(config.interval)
 
 

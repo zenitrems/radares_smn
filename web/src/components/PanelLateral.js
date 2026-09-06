@@ -102,7 +102,7 @@ export default function PanelLateral({
           <dt>Directorio</dt>
           <dd>{producto.dir ?? "—"}</dd>
           <dt>Estado</dt>
-          <dd style={{ color: radar.maintenance ? "var(--accent)" : "var(--teal)" }}>
+          <dd style={{ color: radar.maintenance ? "var(--warn)" : "var(--teal)" }}>
             {radar.maintenance ? "mantenimiento" : "operativo"}
           </dd>
         </dl>

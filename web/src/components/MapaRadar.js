@@ -1,7 +1,12 @@
 /**
- * Escenario de la consola: mapa base oscuro + los GIF de sondeo colocados sobre
- * sus `bounds` reales (los sondeos del SMN son PNG/GIF transparentes
- * georreferenciados, no imágenes planas), más las capas vectoriales del diseño.
+ * Escenario de la consola: los GIF de sondeo colocados sobre sus `bounds`
+ * reales (los sondeos del SMN son PNG/GIF transparentes georreferenciados, no
+ * imágenes planas), más las capas vectoriales del diseño.
+ *
+ * No hay mapa base de teselas: la referencia geográfica la da la división
+ * municipal del INEGI, que además es el soporte del mapeo de lluvia. Así el
+ * escenario no depende de un CDN externo, no hay relieve ni carreteras
+ * compitiendo con los ecos, y el fondo queda en el negro de la consola.
  *
  * Acepta uno o varios sitios, de modo que la misma vista sirve para la consola
  * de una estación y para el mosaico que combina las dos.
@@ -13,16 +18,17 @@ import {
   MapContainer,
   Marker,
   Polyline,
-  TileLayer,
   useMap,
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
+import CapaMunicipios from "./CapaMunicipios";
 import { CIUDADES, destino, rumbo } from "../lib/radar";
 
-const TILES = "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png";
-const ATRIB =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a> · sondeos: SMN/CONAGUA';
+/* Instrumentación del radar: anillos y radiales en el azul de la consola, a
+   baja opacidad para no competir con los ecos. */
+const ANILLO = "rgba(76,141,246,.34)";
+const RADIAL = "rgba(76,141,246,.10)";
 
 const ESCALAS_KM = [1, 2, 5, 10, 20, 25, 50, 100, 150, 200, 250, 500, 1000];
 
@@ -30,6 +36,10 @@ const icono = (className, html, size = [0, 0], anchor = [0, 0]) =>
   L.divIcon({ className, html, iconSize: size, iconAnchor: anchor });
 
 const aLimites = (bounds) => L.latLngBounds(bounds[0], bounds[1]);
+
+/* Referencia estable: un {} literal por defecto remontaría la capa municipal
+   en cada render del mapa. */
+const VACIO = {};
 
 /* Reencuadra al cambiar de producto, de radar o de vista — pero no en cada
    refresco del catálogo: este llega cada minuto con objetos `bounds` nuevos
@@ -152,7 +162,7 @@ const Anillos = memo(function Anillos({ sitios }) {
               radius={r * 1000}
               interactive={false}
               pathOptions={{
-                color: "rgba(245,165,36,.34)",
+                color: ANILLO,
                 weight: 0.9,
                 fill: false,
                 dashArray: r === s.producto.range ? null : "4 5",
@@ -173,7 +183,7 @@ const Anillos = memo(function Anillos({ sitios }) {
               key={`${s.id}-a${az}`}
               positions={[centro, destino(centro, s.producto.range, az)]}
               interactive={false}
-              pathOptions={{ color: "rgba(245,165,36,.10)", weight: 0.7 }}
+              pathOptions={{ color: RADIAL, weight: 0.7 }}
             />
           )),
         ];
@@ -323,7 +333,17 @@ function EcoSitio({ sitio }) {
   );
 }
 
-export default function MapaRadar({ sitios, vista, caja, capas, onCursor, onEscala, onListo }) {
+export default function MapaRadar({
+  sitios,
+  vista,
+  caja,
+  capas,
+  lluvia = VACIO,
+  onMunicipio,
+  onCursor,
+  onEscala,
+  onListo,
+}) {
   /* La geometría solo depende de qué sitios y productos hay, no del sondeo en
      pantalla: se aísla del `idx` para que la reproducción no la redibuje. */
   const clave = sitios.map((s) => `${s.id}:${s.producto.urlName}`).join("|");
@@ -353,9 +373,10 @@ export default function MapaRadar({ sitios, vista, caja, capas, onCursor, onEsca
     >
       {caja && <LimiteMapa caja={caja} />}
       <ControlCentrar bounds={vista} />
-      {capas.base && <TileLayer url={TILES} attribution={ATRIB} subdomains="abcd" maxZoom={19} />}
 
       {sitios.map((s) => (s.visible === false ? null : <EcoSitio key={s.id} sitio={s} />))}
+
+      {capas.municipios && <CapaMunicipios lluvia={lluvia} onMunicipio={onMunicipio} />}
 
       {capas.grid && <Reticula bounds={vista} paso={rangoMax >= 450 ? 2 : 1} />}
       {capas.anillos && <Anillos sitios={geo} />}
