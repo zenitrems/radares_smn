@@ -14,8 +14,13 @@
 /* Inline en el bundle al construir: por eso el prefijo NEXT_PUBLIC_. */
 const TOKEN_MAPBOX = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
+/**
+ * Teselas rasterizadas de un estilo de Mapbox. `estilo` es la parte del
+ * `mapbox://styles/…` que sigue al esquema: 'mapbox/satellite-v9' para los
+ * estilos de casa, 'usuario/id' para uno propio.
+ */
 const mapbox = (estilo) =>
-  `https://api.mapbox.com/styles/v1/mapbox/${estilo}/tiles/512/{z}/{x}/{y}@2x?access_token=${TOKEN_MAPBOX}`;
+  `https://api.mapbox.com/styles/v1/${estilo}/tiles/512/{z}/{x}/{y}@2x?access_token=${TOKEN_MAPBOX}`;
 
 const ATRIB_MAPBOX =
   '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
@@ -28,24 +33,21 @@ export const MAPAS = [
     url: null,
   },
   {
-    id: "mapbox-satelite",
-    lb: "Satélite",
-    nota: "Mapbox",
-    url: mapbox("satellite-v9"),
+    id: "mapbox-oscuro",
+    lb: "Oscuro",
+    nota: "Mapbox · zenlab",
+    url: mapbox("zenlab/cmtplnn6b007501qrfroxgtbu"),
     attribution: ATRIB_MAPBOX,
     tileSize: 512,
     zoomOffset: -1,
     maxZoom: 20,
-    /* El satélite es una fotografía a todo color: al 100 % se come los ecos y
-       los trazos del INEGI, así que entra atenuado. */
-    opacity: 0.72,
     token: "mapbox",
   },
   {
-    id: "mapbox-satelite-calles",
-    lb: "Satélite con calles",
+    id: "mapbox-satelite",
+    lb: "Satélite",
     nota: "Mapbox",
-    url: mapbox("satellite-streets-v12"),
+    url: mapbox("mapbox/satellite-v9"),
     attribution: ATRIB_MAPBOX,
     tileSize: 512,
     zoomOffset: -1,

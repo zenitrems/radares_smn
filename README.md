@@ -65,9 +65,6 @@ Además de los vectores, la consola puede poner teselas por debajo. El catálogo
 está en `web/src/lib/mapas.js` y añadir un proveedor es una entrada más. Por
 omisión no hay ninguno.
 
-Los estilos satelitales son de Mapbox y necesitan credencial; sin ella la opción
-aparece deshabilitada en el panel y todo lo demás funciona igual:
-
 ```bash
 # web/.env.local  (ignorado por git)
 NEXT_PUBLIC_MAPBOX_TOKEN=pk.eyJ...
