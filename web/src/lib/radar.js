@@ -1,18 +1,37 @@
 /* Constantes de la consola y utilidades geográficas compartidas. */
 
 
-/* Sin mapa base de teselas: la referencia geográfica son las capas del INEGI
-   que baja `descarga_inegi.py`. */
-export const CAPAS = [
-  { id: "anillos", lb: "Anillos de rango 150/300/450 km", on: true },
-  { id: "sitio", lb: "Sitio del radar", on: true },
-  { id: "municipios", lb: "División municipal", on: true },
-  { id: "costa", lb: "Línea de costa y frontera", on: true },
-  { id: "localidades", lb: "Localidades", on: true },
-  { id: "aeropuertos", lb: "Aeropuertos", on: false },
-  { id: "grid", lb: "Retícula lat/lon", on: true },
-  { id: "escala", lb: "Escala de color", on: true },
+/**
+ * Capas superpuestas, en dos familias que el panel muestra por separado: lo
+ * que dibuja el territorio (geografía, del INEGI por `descarga_inegi.py`) y lo
+ * que dibuja el instrumento. El mapa base va aparte, en lib/mapas: es una
+ * elección entre opciones, no una lista de casillas.
+ */
+export const GRUPOS_CAPAS = [
+  {
+    id: "geografia",
+    lb: "Geografía",
+    capas: [
+      { id: "municipios", lb: "División municipal", on: true },
+      { id: "costa", lb: "Línea de costa y frontera", on: true },
+      { id: "localidades", lb: "Localidades", on: true },
+      { id: "aeropuertos", lb: "Aeropuertos", on: false },
+    ],
+  },
+  {
+    id: "radar",
+    lb: "Radar",
+    capas: [
+      { id: "anillos", lb: "Anillos de rango 150/300/450 km", on: true },
+      { id: "sitio", lb: "Sitio del radar", on: true },
+      { id: "grid", lb: "Retícula lat/lon", on: true },
+      { id: "escala", lb: "Escala de color", on: true },
+    ],
+  },
 ];
+
+/* Lista plana, para el estado inicial de las casillas. */
+export const CAPAS = GRUPOS_CAPAS.flatMap((g) => g.capas);
 
 export const VELOCIDADES = [0.5, 1, 2, 4];
 

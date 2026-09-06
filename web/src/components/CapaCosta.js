@@ -1,10 +1,5 @@
 /**
  * Línea de costa y frontera del INEGI (generalización 1:1 000 000).
- *
- * Sin mapa base de teselas, los municipios sólo dibujan la península: fuera de
- * Campeche, Quintana Roo y Yucatán el escenario quedaba vacío, y los productos
- * de 450 km encuadran buena parte del golfo, Tabasco y Belice. Esta capa
- * devuelve ese contexto sin traer nada más.
  */
 import { memo } from "react";
 import { GeoJSON } from "react-leaflet";

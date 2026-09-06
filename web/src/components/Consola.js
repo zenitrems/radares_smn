@@ -4,6 +4,7 @@ import EncabezadoConsola from "./EncabezadoConsola";
 import PanelLateral from "./PanelLateral";
 import LineaTiempo from "./LineaTiempo";
 import Escala from "./Escala";
+import { MAPA_INICIAL } from "../lib/mapas";
 import {
   CAPAS,
   fechaUtc,
@@ -27,8 +28,13 @@ const ultimoDe = (producto) => producto.frames[producto.frames.length - 1]?.t ??
 const primerProductoConDatos = (radar) =>
   (radar.products.find((p) => p.frames.length > 0) ?? radar.products[0]).urlName;
 
-/* Arranca en el radar/producto con el sondeo más reciente en disco. */
-function seleccionInicial(catalogo) {
+/* Vista de arranque: el CMAX de Cancún es el producto de guardia, porque el
+   máximo en la columna no depende de la elevación y cubre toda la península
+   turística. */
+const ARRANQUE = { radar: "cancun", tipo: "cmax" };
+
+/* El sondeo más reciente en disco, para cuando el de arranque no esté. */
+function masReciente(catalogo) {
   let mejor = null;
   catalogo.radars.forEach((r) =>
     r.products.forEach((p) => {
@@ -36,11 +42,24 @@ function seleccionInicial(catalogo) {
       if (!mejor || ultimoDe(p) > mejor.t) mejor = { radar: r, producto: p, t: ultimoDe(p) };
     })
   );
-  const radar = mejor?.radar ?? catalogo.radars[0];
+  return mejor;
+}
+
+function seleccionInicial(catalogo) {
+  const preferido = catalogo.radars.find((r) => r.urlName === ARRANQUE.radar);
+  const producto = preferido?.products.find((p) => p.type === ARRANQUE.tipo && p.frames.length > 0);
+
+  /* Si Cancún no publica CMAX ahora mismo, se cae al sondeo más fresco que haya
+     en disco antes que dejar la consola vacía. */
+  const elegido = producto
+    ? { radar: preferido, producto }
+    : masReciente(catalogo) ?? { radar: catalogo.radars[0], producto: null };
+
+  const radar = elegido.radar ?? catalogo.radars[0];
   return {
     radarId: radar?.urlName ?? null,
-    prodId: mejor?.producto.urlName ?? (radar ? primerProductoConDatos(radar) : null),
-    idx: Math.max(0, (mejor?.producto.frames.length ?? 1) - 1),
+    prodId: elegido.producto?.urlName ?? (radar ? primerProductoConDatos(radar) : null),
+    idx: Math.max(0, (elegido.producto?.frames.length ?? 1) - 1),
   };
 }
 
@@ -54,6 +73,8 @@ export default function Consola({ catalogo: inicial }) {
   const [reproduciendo, setReproduciendo] = useState(false);
   const [velocidad, setVelocidad] = useState(1);
   const [capas, setCapas] = useState(capasIniciales);
+  const [mapaBase, setMapaBase] = useState(MAPA_INICIAL);
+  const [panelAbierto, setPanelAbierto] = useState(true);
   const [cursor, setCursor] = useState(null);
   const [escala, setEscala] = useState({ px: 80, txt: "—" });
   const [mapaListo, setMapaListo] = useState(false);
@@ -142,6 +163,8 @@ export default function Consola({ catalogo: inicial }) {
       } else if (e.code === "Space") {
         setReproduciendo((p) => !p);
         e.preventDefault();
+      } else if (e.key === "p" || e.key === "P") {
+        if (!enRango) setPanelAbierto((v) => !v);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -187,11 +210,13 @@ export default function Consola({ catalogo: inicial }) {
       : "—");
 
   return (
-    <div id="app">
+    <div id="app" className={panelAbierto ? "" : "plegado"}>
       <EncabezadoConsola
         estaciones={[{ id: radar.estacion, ultimo }]}
         intervalo={intervalo}
         ruta="/"
+        panelAbierto={panelAbierto}
+        onPanel={setPanelAbierto}
       />
 
       <PanelLateral
@@ -199,9 +224,11 @@ export default function Consola({ catalogo: inicial }) {
         radar={radar}
         producto={producto}
         capas={capas}
+        mapaBase={mapaBase}
         onRadar={elegirRadar}
         onProducto={elegirProducto}
         onCapa={(id, on) => setCapas((c) => ({ ...c, [id]: on }))}
+        onMapaBase={setMapaBase}
       />
 
       <main>
@@ -211,6 +238,7 @@ export default function Consola({ catalogo: inicial }) {
             vista={producto.map.bounds}
             caja={caja}
             capas={capas}
+            mapaBase={mapaBase}
             onCursor={setCursor}
             onEscala={setEscala}
             onListo={() => setMapaListo(true)}

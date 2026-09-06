@@ -3,10 +3,10 @@
  * reales (los sondeos del SMN son PNG/GIF transparentes georreferenciados, no
  * imágenes planas), más las capas vectoriales del diseño.
  *
- * No hay mapa base de teselas: la referencia geográfica la da la división
- * municipal del INEGI, que además es el soporte del mapeo de lluvia. Así el
- * escenario no depende de un CDN externo, no hay relieve ni carreteras
- * compitiendo con los ecos, y el fondo queda en el negro de la consola.
+ * Por omisión no hay mapa base de teselas: la referencia geográfica la dan las
+ * capas del INEGI, así que el escenario no depende de ningún servicio externo y
+ * el fondo queda en el negro de la consola. El satélite y lo que se añada al
+ * catálogo de lib/mapas entran por debajo de todo, atenuados.
  *
  * Acepta uno o varios sitios, de modo que la misma vista sirve para la consola
  * de una estación y para el mosaico que combina las dos.
@@ -23,6 +23,7 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import CapaAeropuertos from "./CapaAeropuertos";
+import CapaBase from "./CapaBase";
 import CapaCosta from "./CapaCosta";
 import CapaLocalidades from "./CapaLocalidades";
 import CapaMunicipios from "./CapaMunicipios";
@@ -108,6 +109,20 @@ function LimiteMapa({ caja }) {
     return () => map.off("resize", ajustarZoomMinimo);
   }, [map, limites]);
 
+  return null;
+}
+
+/* El panel lateral se pliega, y Leaflet no se entera: su evento `resize` viene
+   de la ventana, no del contenedor. Sin esto el mapa queda con el ancho viejo
+   —franja gris a un lado y coordenadas desplazadas— hasta el siguiente zoom. */
+function AjusteTamaño() {
+  const map = useMap();
+  useEffect(() => {
+    if (typeof ResizeObserver === "undefined") return undefined;
+    const ro = new ResizeObserver(() => map.invalidateSize({ animate: false }));
+    ro.observe(map.getContainer());
+    return () => ro.disconnect();
+  }, [map]);
   return null;
 }
 
@@ -324,6 +339,7 @@ export default function MapaRadar({
   vista,
   caja,
   capas,
+  mapaBase,
   lluvia = VACIO,
   onMunicipio,
   onCursor,
@@ -359,6 +375,8 @@ export default function MapaRadar({
     >
       {caja && <LimiteMapa caja={caja} />}
       <ControlCentrar bounds={vista} />
+      <AjusteTamaño />
+      <CapaBase id={mapaBase} />
 
       {sitios.map((s) => (s.visible === false ? null : <EcoSitio key={s.id} sitio={s} />))}
 

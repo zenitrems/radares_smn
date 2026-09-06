@@ -18,7 +18,13 @@ const clase = (edad) =>
  * `estaciones`: [{ id, ultimo }] — una sola en la consola por estación, las dos
  * en el mosaico.
  */
-export default function EncabezadoConsola({ estaciones, intervalo, ruta }) {
+export default function EncabezadoConsola({
+  estaciones,
+  intervalo,
+  ruta,
+  panelAbierto,
+  onPanel,
+}) {
   /* Todo lo que depende de la hora actual se calcula ya montado, para que el
      HTML del servidor y el del cliente coincidan. */
   const [reloj, setReloj] = useState(null);
@@ -58,6 +64,19 @@ export default function EncabezadoConsola({ estaciones, intervalo, ruta }) {
 
   return (
     <header>
+      <button
+        className="tgl-panel"
+        onClick={() => onPanel(!panelAbierto)}
+        aria-pressed={panelAbierto}
+        aria-label={panelAbierto ? "Ocultar panel" : "Mostrar panel"}
+        title={panelAbierto ? "Ocultar panel (P)" : "Mostrar panel (P)"}
+      >
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+          <rect x="1.5" y="2.5" width="13" height="11" rx="1.5" />
+          <path d="M6 2.5v11" />
+        </svg>
+      </button>
+
       <div className="brand">
         <b>Sondeos Radar</b>
         <span>SMN · PENÍNSULA DE YUCATÁN</span>

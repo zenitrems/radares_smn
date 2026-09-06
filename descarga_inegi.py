@@ -31,13 +31,23 @@ import requests
 
 WFS = "https://mapas.inegi.org.mx/geoserver/wfs"
 
-ENTIDADES = {"04": "Campeche", "23": "Quintana Roo", "31": "Yucatán"}
+# El escenario ya no es sólo la península: los productos de 450 km de Sabancuy
+# cubren Tabasco y buena parte de Chiapas, y ahí también cae lluvia que hay que
+# poder atribuir a un municipio.
+ENTIDADES = {
+    "04": "Campeche",
+    "07": "Chiapas",
+    "23": "Quintana Roo",
+    "27": "Tabasco",
+    "31": "Yucatán",
+}
 
 # Escenario de la consola: la unión de los `bounds` de los productos de radar
-# (Sabancuy 450 km y Cancún 300 km) con algo de aire. Las capas que no traen
-# clave de entidad se recortan con esta caja, para que la costa y la frontera no
-# se corten justo donde empieza el alcance del radar.
-CAJA = (-95.6, 14.8, -83.8, 23.9)
+# (Sabancuy 450 km y Cancún 300 km) con algo de aire, y bajando lo suficiente
+# para no cortar Chiapas. Las capas que no traen clave de entidad se recortan
+# con esta caja, para que la costa y la frontera no se corten justo donde
+# empieza el alcance del radar.
+CAJA = (-95.8, 14.3, -83.8, 23.9)
 
 DESTINO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "web", "public", "geo")
 
@@ -182,14 +192,14 @@ CAPAS = {
         "typename": "Sitio_Inegi:mg_Municipal",
         "filtro": por_entidad(),
         "normaliza": municipio,
-        "salida": "municipios_peninsula.geojson",
-        "que_es": "división municipal (130 municipios)",
+        "salida": "municipios_sureste.geojson",
+        "que_es": "división municipal",
     },
     "localidades": {
         "typename": "Sitio_Inegi:mg_Localidades",
         "filtro": por_entidad(),
         "normaliza": localidad,
-        "salida": "localidades_peninsula.geojson",
+        "salida": "localidades_sureste.geojson",
         "que_es": "localidades como punto, con área de la mancha urbana",
         # Son las localidades amanzanadas (1602 en la península). Los caseríos
         # rurales sin traza urbana viven aparte, en
@@ -200,7 +210,7 @@ CAPAS = {
         "typename": "Sitio_Inegi:tr_limitesnacionales_lineacostafrontera_1m",
         "filtro": por_caja("geom"),
         "normaliza": costa,
-        "salida": "costa_peninsula.geojson",
+        "salida": "costa_sureste.geojson",
         "que_es": "línea de costa y frontera, generalización 1:1 000 000",
     },
     "aeropuertos": {
@@ -209,6 +219,11 @@ CAPAS = {
         "normaliza": aeropuerto,
         "salida": "aeropuertos_peninsula.geojson",
         "que_es": "aeropuertos nacionales e internacionales",
+        # Descarga desactivada: el archivo que ya está en web/public/geo se
+        # conserva y la capa sigue funcionando en la consola. Conserva el
+        # nombre `_peninsula` porque su contenido es el de la caja anterior;
+        # `python descarga_inegi.py aeropuertos` lo regenera con la caja de hoy.
+        "activa": False,
     },
 }
 
@@ -257,10 +272,14 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[1],
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("capas", nargs="*", default=None,
-                    help="capas a descargar; sin argumentos, todas: " + ", ".join(CAPAS))
+                    help="capas a descargar; sin argumentos, las activas. Disponibles: " +
+                         ", ".join("%s%s" % (n, "" if c.get("activa", True) else " (desactivada)")
+                                   for n, c in CAPAS.items()))
     args = ap.parse_args()
 
-    nombres = args.capas or list(CAPAS)
+    # Sin argumentos se bajan sólo las capas activas; nombrarlas explícitamente
+    # descarga cualquiera, activa o no.
+    nombres = args.capas or [n for n, c in CAPAS.items() if c.get("activa", True)]
     desconocidas = [n for n in nombres if n not in CAPAS]
     if desconocidas:
         sys.exit("capa desconocida: %s (disponibles: %s)" % (", ".join(desconocidas), ", ".join(CAPAS)))

@@ -32,7 +32,7 @@ function CapaAeropuertos() {
             keyboard={false}
             icon={L.divIcon({
               className: "mk-aero",
-              html: `<i></i><b>${corto(f.properties.nombre)}</b>`,
+              html: `<i></i><b>${corto(f.properties.oaci)}</b>`,
               iconSize: [0, 0],
               iconAnchor: [0, 0],
             })}

@@ -4,6 +4,7 @@ import EncabezadoConsola from "./EncabezadoConsola";
 import PanelMosaico from "./PanelMosaico";
 import LineaTiempo from "./LineaTiempo";
 import Escala from "./Escala";
+import { MAPA_INICIAL } from "../lib/mapas";
 import {
   CAPAS,
   fechaUtc,
@@ -40,6 +41,8 @@ export default function ConsolaMosaico({ catalogo: inicial }) {
   const [reproduciendo, setReproduciendo] = useState(false);
   const [velocidad, setVelocidad] = useState(1);
   const [capas, setCapas] = useState(capasIniciales);
+  const [mapaBase, setMapaBase] = useState(MAPA_INICIAL);
+  const [panelAbierto, setPanelAbierto] = useState(true);
   const [cursor, setCursor] = useState(null);
   const [escala, setEscala] = useState({ px: 80, txt: "—" });
   const [mapaListo, setMapaListo] = useState(false);
@@ -174,16 +177,23 @@ export default function ConsolaMosaico({ catalogo: inicial }) {
       : "—");
 
   return (
-    <div id="app">
-      <EncabezadoConsola estaciones={cabecera} ruta="/mosaico" />
+    <div id="app" className={panelAbierto ? "" : "plegado"}>
+      <EncabezadoConsola
+        estaciones={cabecera}
+        ruta="/mosaico"
+        panelAbierto={panelAbierto}
+        onPanel={setPanelAbierto}
+      />
 
       <PanelMosaico
         estaciones={estaciones}
         visibles={visibles}
         pasos={pasos}
         capas={capas}
+        mapaBase={mapaBase}
         onVisible={(id, on) => setVisibles((v) => ({ ...v, [id]: on }))}
         onCapa={(id, on) => setCapas((c) => ({ ...c, [id]: on }))}
+        onMapaBase={setMapaBase}
       />
 
       <main>
@@ -193,6 +203,7 @@ export default function ConsolaMosaico({ catalogo: inicial }) {
             vista={vista}
             caja={caja}
             capas={capas}
+            mapaBase={mapaBase}
             onCursor={setCursor}
             onEscala={setEscala}
             onListo={() => setMapaListo(true)}

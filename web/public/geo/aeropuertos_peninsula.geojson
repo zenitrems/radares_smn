@@ -1,1 +1,221 @@
-{"type":"FeatureCollection","features":[{"type":"Feature","id":"1964","geometry":{"type":"Point","coordinates":[-94.5767,18.1022]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Internacional de Minatitlán","lugar":"Cosoleacaque, Veracruz de Ignacio de la Llave","tipo":"Internacional"}},{"type":"Feature","id":"2162","geometry":{"type":"Point","coordinates":[-92.819,17.9925]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Internacional de Villahermosa, Carlos Rovirosa Pérez","lugar":"Centro, Tabasco","tipo":"Internacional"}},{"type":"Feature","id":"2662","geometry":{"type":"Point","coordinates":[-93.0193,16.5611]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Internacional de Tuxtla Gutiérrez, Ángel Albino Corzo","lugar":"Chiapa de Corzo, Chiapas","tipo":"Internacional"}},{"type":"Feature","id":"27998","geometry":{"type":"Point","coordinates":[-87.659,20.1663]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Internacional de Tulum, Felipe Carrillo Puerto","lugar":"Felipe Carrillo Puerto, Quintana Roo","tipo":"Internacional"}},{"type":"Feature","id":"2805","geometry":{"type":"Point","coordinates":[-92.0157,17.5375]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Internacional de Palenque","lugar":"Palenque, Chiapas","tipo":"Internacional"}},{"type":"Feature","id":"2965","geometry":{"type":"Point","coordinates":[-90.5041,19.8142]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Internacional de Campeche. Ing. Alberto Acuña Ongay","lugar":"Campeche, Campeche","tipo":"Internacional"}},{"type":"Feature","id":"3005","geometry":{"type":"Point","coordinates":[-91.8025,18.6511]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Internacional de Ciudad del Carmen","lugar":"Carmen, Campeche","tipo":"Internacional"}},{"type":"Feature","id":"3037","geometry":{"type":"Point","coordinates":[-88.3242,18.5066]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Internacional de Chetumal","lugar":"Othón P. Blanco, Quintana Roo","tipo":"Internacional"}},{"type":"Feature","id":"3042","geometry":{"type":"Point","coordinates":[-86.8763,21.0398]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Internacional de Cancún","lugar":"Benito Juárez, Quintana Roo","tipo":"Internacional"}},{"type":"Feature","id":"3043","geometry":{"type":"Point","coordinates":[-86.9301,20.5115]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Internacional de Cozumel","lugar":"Cozumel, Quintana Roo","tipo":"Internacional"}},{"type":"Feature","id":"3104","geometry":{"type":"Point","coordinates":[-88.5663,20.6891]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Nacional Chichén Itzá","lugar":"Tinum, Yucatán","tipo":"Nacional"}},{"type":"Feature","id":"3105","geometry":{"type":"Point","coordinates":[-88.4492,20.6389]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Internacional Chichen Itzá","lugar":"Kaua, Yucatán","tipo":"Internacional"}},{"type":"Feature","id":"3209","geometry":{"type":"Point","coordinates":[-89.6631,20.9337]},"geometry_name":"the_geom","properties":{"nombre":"Aeropuerto Internacional de Mérida, Lic. Manuel Crescencio Rejón","lugar":"Mérida, Yucatán","tipo":"Internacional"}}]}
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "id": "1964",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -94.5767,
+                    18.1022
+                ]
+            },
+            "geometry_name": "the_geom",
+            "properties": {
+                "nombre": "Aeropuerto Internacional de Minatitlán",
+                "lugar": "Cosoleacaque, Veracruz de Ignacio de la Llave",
+                "oaci": "MMMT",
+                "tipo": "Internacional"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": "2162",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -92.819,
+                    17.9925
+                ]
+            },
+            "geometry_name": "the_geom",
+            "properties": {
+                "nombre": "Aeropuerto Internacional de Villahermosa, Carlos Rovirosa Pérez",
+                "lugar": "Centro, Tabasco",
+                "oaci": "MMVA",
+                "tipo": "Internacional"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": "2662",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -93.0193,
+                    16.5611
+                ]
+            },
+            "geometry_name": "the_geom",
+            "properties": {
+                "nombre": "Aeropuerto Internacional de Tuxtla Gutiérrez, Ángel Albino Corzo",
+                "lugar": "Chiapa de Corzo, Chiapas",
+                "oaci": "MMTG",
+                "tipo": "Internacional"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": "27998",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -87.659,
+                    20.1663
+                ]
+            },
+            "geometry_name": "the_geom",
+            "properties": {
+                "nombre": "Aeropuerto Internacional de Tulum, Felipe Carrillo Puerto",
+                "lugar": "Felipe Carrillo Puerto, Quintana Roo",
+                "oaci": "MMTL",
+                "tipo": "Internacional"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": "2805",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -92.0157,
+                    17.5375
+                ]
+            },
+            "geometry_name": "the_geom",
+            "properties": {
+                "nombre": "Aeropuerto Internacional de Palenque",
+                "lugar": "Palenque, Chiapas",
+                "oaci": "MMPQ",
+                "tipo": "Internacional"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": "2965",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -90.5041,
+                    19.8142
+                ]
+            },
+            "geometry_name": "the_geom",
+            "properties": {
+                "nombre": "Aeropuerto Internacional de Campeche. Ing. Alberto Acuña Ongay",
+                "lugar": "Campeche, Campeche",
+                "oaci": "MMCP",
+                "tipo": "Internacional"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": "3005",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -91.8025,
+                    18.6511
+                ]
+            },
+            "geometry_name": "the_geom",
+            "properties": {
+                "nombre": "Aeropuerto Internacional de Ciudad del Carmen",
+                "lugar": "Carmen, Campeche",
+                "oaci": "MMCE",
+                "tipo": "Internacional"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": "3037",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -88.3242,
+                    18.5066
+                ]
+            },
+            "geometry_name": "the_geom",
+            "properties": {
+                "nombre": "Aeropuerto Internacional de Chetumal",
+                "oaci": "MMCM",
+                "lugar": "Othón P. Blanco, Quintana Roo",
+                "tipo": "Internacional"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": "3042",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -86.8763,
+                    21.0398
+                ]
+            },
+            "geometry_name": "the_geom",
+            "properties": {
+                "nombre": "Aeropuerto Internacional de Cancún",
+                "oaci": "MMUN",
+                "lugar": "Benito Juárez, Quintana Roo",
+                "tipo": "Internacional"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": "3043",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -86.9301,
+                    20.5115
+                ]
+            },
+            "geometry_name": "the_geom",
+            "properties": {
+                "nombre": "Aeropuerto Internacional de Cozumel",
+                "oaci": "MMCZ",
+                "lugar": "Cozumel, Quintana Roo",
+                "tipo": "Internacional"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": "3105",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -88.4492,
+                    20.6389
+                ]
+            },
+            "geometry_name": "the_geom",
+            "properties": {
+                "nombre": "Aeropuerto Internacional Chichen Itzá",
+                "oaci": "MMCT",
+                "lugar": "Kaua, Yucatán",
+                "tipo": "Internacional"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": "3209",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -89.6631,
+                    20.9337
+                ]
+            },
+            "geometry_name": "the_geom",
+            "properties": {
+                "nombre": "Aeropuerto Internacional de Mérida, Lic. Manuel Crescencio Rejón",
+                "oaci": "MMMD",
+                "lugar": "Mérida, Yucatán",
+                "tipo": "Internacional"
+            }
+        }
+    ]
+}

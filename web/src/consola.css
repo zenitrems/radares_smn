@@ -14,11 +14,18 @@ a{color:var(--accent);text-decoration:none}
 a:hover{color:var(--accent-alto)}
 button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
-#app{height:100%;display:grid;grid-template-columns:312px 1fr;grid-template-rows:44px 1fr}
+#app{height:100%;display:grid;grid-template-columns:312px 1fr;grid-template-rows:44px 1fr;
+  transition:grid-template-columns .18s ease}
+#app.plegado{grid-template-columns:0 1fr}
+#app.plegado aside{border-right:none}
 
 /* ── encabezado ── */
 header{grid-column:1/-1;display:flex;align-items:center;gap:18px;padding:0 14px;
   background:var(--panel);border-bottom:1px solid var(--line)}
+.tgl-panel{display:grid;place-content:center;width:26px;height:26px;margin-right:-4px;
+  border:1px solid var(--line-2);border-radius:3px;color:var(--txt-3);background:var(--panel-2)}
+.tgl-panel:hover{color:var(--txt);border-color:var(--txt-3)}
+.tgl-panel[aria-pressed="true"]{color:var(--accent)}
 .brand{display:flex;align-items:baseline;gap:9px}
 .brand b{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
 .brand span{font-family:var(--mono);font-size:10.5px;color:var(--txt-3);letter-spacing:.08em}
@@ -87,6 +94,15 @@ label.radar[aria-selected="false"] .dot{background:var(--txt-3);box-shadow:none}
   border:solid #0B0E11;border-width:0 1.8px 1.8px 0;transform:rotate(42deg)}
 .lyr .lb{font-size:12px;color:var(--txt-2)}
 .lyr input:checked ~ .lb{color:var(--txt)}
+
+/* Mapa base: opciones excluyentes, marca redonda para distinguirlas de las capas. */
+.lyr.op{gap:9px}
+.lyr .radio{width:13px;height:13px;border:1px solid var(--line-2);border-radius:50%;flex:none;position:relative}
+.lyr input:checked + .radio{border-color:var(--accent)}
+.lyr input:checked + .radio::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--accent)}
+.lyr .nota{margin-left:auto;font-family:var(--mono);font-size:9.5px;color:var(--txt-3);letter-spacing:.04em}
+.lyr[aria-disabled="true"]{cursor:not-allowed;opacity:.55}
+.lyr[aria-disabled="true"]:hover{background:none}
 
 .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:2px 12px 4px;
   font-family:var(--mono);font-size:10.5px}
@@ -215,7 +231,11 @@ main{position:relative;display:grid;grid-template-rows:1fr auto;min-width:0;min-
 }
 
 @media (max-width:900px), (orientation:portrait){
-  #app{grid-template-columns:1fr;grid-template-rows:44px auto 1fr}
+  #app{grid-template-columns:1fr;grid-template-rows:44px auto 1fr;
+    transition:grid-template-rows .18s ease}
+  /* En vertical el panel es una franja arriba, no una columna: se pliega en alto. */
+  #app.plegado{grid-template-columns:1fr;grid-template-rows:44px 0 1fr}
+  #app.plegado aside{border-bottom:none}
   header{gap:12px;overflow-x:auto}
   aside{border-right:none;border-bottom:1px solid var(--line);max-height:38vh}
   main{grid-row:3}

@@ -1,13 +1,16 @@
-import { CAPAS, horaUtc } from "../lib/radar";
+import SelectorCapas from "./SelectorCapas";
+import { horaUtc } from "../lib/radar";
 
 export default function PanelLateral({
   radars,
   radar,
   producto,
   capas,
+  mapaBase,
   onRadar,
   onProducto,
   onCapa,
+  onMapaBase,
 }) {
   return (
     <aside>
@@ -69,22 +72,12 @@ export default function PanelLateral({
         </div>
       </div>
 
-      <div className="sec">
-        <div className="sec-h">Capas</div>
-        <div className="sec-b">
-          {CAPAS.map((l) => (
-            <label className="lyr" key={l.id}>
-              <input
-                type="checkbox"
-                checked={!!capas[l.id]}
-                onChange={(e) => onCapa(l.id, e.target.checked)}
-              />
-              <i className="box" />
-              <span className="lb">{l.lb}</span>
-            </label>
-          ))}
-        </div>
-      </div>
+      <SelectorCapas
+        mapaBase={mapaBase}
+        capas={capas}
+        onMapaBase={onMapaBase}
+        onCapa={onCapa}
+      />
 
       <div className="sec">
         <div className="sec-h">Sitio</div>

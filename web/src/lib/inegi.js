@@ -9,9 +9,11 @@
 import { useEffect, useState } from "react";
 
 export const RUTAS = {
-  municipios: "/geo/municipios_peninsula.geojson",
-  localidades: "/geo/localidades_peninsula.geojson",
-  costa: "/geo/costa_peninsula.geojson",
+  municipios: "/geo/municipios_sureste.geojson",
+  localidades: "/geo/localidades_sureste.geojson",
+  costa: "/geo/costa_sureste.geojson",
+  /* Sin `_sureste`: su descarga está desactivada en descarga_inegi.py y el
+     archivo conserva el recorte anterior. */
   aeropuertos: "/geo/aeropuertos_peninsula.geojson",
 };
 

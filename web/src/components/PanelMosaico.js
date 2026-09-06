@@ -1,7 +1,17 @@
-import { CAPAS, horaUtc } from "../lib/radar";
+import SelectorCapas from "./SelectorCapas";
+import { horaUtc } from "../lib/radar";
 import { TOLERANCIA_MIN } from "../lib/mosaico";
 
-export default function PanelMosaico({ estaciones, visibles, pasos, capas, onVisible, onCapa }) {
+export default function PanelMosaico({
+  estaciones,
+  visibles,
+  pasos,
+  capas,
+  mapaBase,
+  onVisible,
+  onCapa,
+  onMapaBase,
+}) {
   return (
     <aside>
       <div className="sec">
@@ -50,22 +60,12 @@ export default function PanelMosaico({ estaciones, visibles, pasos, capas, onVis
         </div>
       </div>
 
-      <div className="sec">
-        <div className="sec-h">Capas</div>
-        <div className="sec-b">
-          {CAPAS.map((l) => (
-            <label className="lyr" key={l.id}>
-              <input
-                type="checkbox"
-                checked={!!capas[l.id]}
-                onChange={(ev) => onCapa(l.id, ev.target.checked)}
-              />
-              <i className="box" />
-              <span className="lb">{l.lb}</span>
-            </label>
-          ))}
-        </div>
-      </div>
+      <SelectorCapas
+        mapaBase={mapaBase}
+        capas={capas}
+        onMapaBase={onMapaBase}
+        onCapa={onCapa}
+      />
 
       <div className="sec">
         <div className="sec-h">Emparejado</div>
