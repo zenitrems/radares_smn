@@ -1,0 +1,35 @@
+services:
+  # Consola web
+  web:
+    build:
+      context: .
+      target: web
+      args:
+        NEXT_PUBLIC_MAPBOX_TOKEN: ${NEXT_PUBLIC_MAPBOX_TOKEN:-}
+    ports:
+      - "3000:3000"
+    environment:
+      SONDEOS_DIR: /data/sondeos
+    volumes:
+      - ./sondeos:/data/sondeos:ro
+    restart: unless-stopped
+    
+  #Python Script
+  descarga:
+    build:
+      context: .
+      target: descarga
+    user: "${HOST_UID:-0}:${HOST_GID:-0}"
+    environment:
+      SONDEOS_DIR: /data/sondeos
+    command:
+      - python
+      - descarga_sondeos.py
+      - --estaciones=${ESTACIONES:-CANC,SABA}
+      - --max-imagenes=${MAX_IMAGENES:-100}
+      - --interval=${INTERVAL:-150}
+      - --archive-dir=/data/sondeos_archivo
+    volumes:
+      - ./sondeos:/data/sondeos
+      - ./sondeos_archivo:/data/sondeos_archivo
+    restart: unless-stopped

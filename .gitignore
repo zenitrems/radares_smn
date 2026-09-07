@@ -8,3 +8,4 @@ web/.next
 next/public
 web/package-lock.json
 web/.env*.local
+.env

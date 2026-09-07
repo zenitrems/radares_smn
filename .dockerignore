@@ -1,0 +1,16 @@
+.git
+.gitignore
+.venv
+.vscode
+.claude
+**/node_modules
+web/.next
+web/.env*.local
+sondeos
+sondeos_gif
+sondeos_archivo
+__pycache__
+**/*.pyc
+Dockerfile
+docker-compose.yml
+README.md
