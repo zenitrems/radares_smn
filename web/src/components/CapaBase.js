@@ -21,7 +21,7 @@ export default function CapaBase({ id }) {
       opacity: mapa.opacity ?? 1,
       source: new XYZ({
         url: mapa.url,
-        attributions: "WCONAGUA/SMN INEGI " + mapa.attribution,
+        attributions: "CONAGUA/SMN INEGI " + mapa.attribution,
         /* `tileSize` es el mapa que cubre cada tesela y `tilePixelRatio` los
            píxeles de imagen que trae: así se describe una de 512 servida a @2x
            sin tener que desplazar el zoom. */
