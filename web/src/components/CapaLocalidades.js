@@ -97,7 +97,6 @@ function CapaLocalidades() {
       declutter: true,
       source: new VectorSource({
         features: formato.readFeatures(geo),
-        attributions: 'localidades: <a href="https://www.inegi.org.mx/">INEGI</a>',
       }),
       /* El recorte por encuadre lo hace ya la propia fuente (sólo se estilan
          las localidades del extent visible), así que aquí basta el corte por

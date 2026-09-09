@@ -26,7 +26,6 @@ function CapaCosta() {
       zIndex: NIVEL.costa,
       source: new VectorSource({
         features: formato.readFeatures(geo),
-        attributions: 'línea de costa: <a href="https://www.inegi.org.mx/">INEGI</a>',
       }),
       style: (f) => (f.get("tipo") === "Frontera" ? FRONTERA : COSTA),
     });

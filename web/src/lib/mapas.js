@@ -51,7 +51,7 @@ export const MAPAS = [
   },
 ];
 
-export const MAPA_INICIAL = "ninguno";
+export const MAPA_INICIAL = "mapbox-oscuro";
 
 const TOKENS = { mapbox: TOKEN_MAPBOX };
 

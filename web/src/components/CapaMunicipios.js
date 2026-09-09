@@ -89,7 +89,6 @@ function CapaMunicipios({ lluvia, onMunicipio }) {
       zIndex: NIVEL.municipios,
       source: new VectorSource({
         features: formato.readFeatures(geo),
-        attributions: 'división municipal: <a href="https://www.inegi.org.mx/">INEGI</a>',
       }),
       style: (f) => {
         const tramo = tramoDeLluvia(lluviaRef.current[f.get("CVEGEO")]);

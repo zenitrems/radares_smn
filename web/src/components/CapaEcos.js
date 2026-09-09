@@ -18,7 +18,6 @@ import ImageStatic from "ol/source/ImageStatic";
 import { useCapa } from "../mapa/contexto";
 import { extentDe, NIVEL, VISTA } from "../mapa/geo";
 
-const ATRIBUCION = "sondeos: SMN/CONAGUA";
 
 function CapaEcos({ sitio }) {
   const { producto, frames, idx } = sitio;
@@ -72,7 +71,6 @@ function CapaEcos({ sitio }) {
           url: src,
           imageExtent: extent,
           projection: VISTA,
-          attributions: ATRIBUCION,
         })
       );
     });

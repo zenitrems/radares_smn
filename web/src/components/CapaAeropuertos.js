@@ -53,7 +53,6 @@ function CapaAeropuertos() {
       declutter: true,
       source: new VectorSource({
         features: formato.readFeatures(geo),
-        attributions: 'aeropuertos: <a href="https://www.inegi.org.mx/">INEGI</a>',
       }),
       style: (f) => estiloDe(corto(f.get("oaci"))),
     });
