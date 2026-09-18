@@ -2,6 +2,9 @@
 
 Descarga, almacenamiento y visualización de los productos de radar del Servicio Meteorológico Nacional (SMN), con foco en la península de Yucatán.
 
+> **Proyecto no oficial.** No tiene relación, respaldo ni supervisión de las instituciones mencionadas.
+> [NOTICE.md](NOTICE.md).
+
 ## Descarga de sondeos
 
 ```bash
@@ -77,3 +80,11 @@ con la clave de 5 dígitos del INEGI. Los municipios con dato se rellenan con la
 escala del SMN (`web/src/lib/municipios.js`), los demás quedan sólo con su
 trazo para no tapar los ecos. `onMunicipio` recibe las propiedades del municipio
 al hacer clic.
+
+## Licencia
+
+El código es **MIT** ([LICENSE](LICENSE)); lo escrito aquí cubre eso y nada más.
+
+Los datos no son míos y no los relicencio: los productos de radar son del
+SMN/CONAGUA y las capas vectoriales del INEGI, cada uno con sus propios
+términos.

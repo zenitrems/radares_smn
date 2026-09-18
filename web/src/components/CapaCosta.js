@@ -9,6 +9,7 @@ import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
 import { useCapa } from "../mapa/contexto";
 import { DATOS, NIVEL, VISTA } from "../mapa/geo";
+import { ATRIBUCION_DATOS } from "../lib/creditos";
 import { RUTAS, useGeo } from "../lib/inegi";
 
 const COSTA = new Style({ stroke: new Stroke({ color: "rgba(126,158,186,.5)", width: 0.9 }) });
@@ -26,6 +27,7 @@ function CapaCosta() {
       zIndex: NIVEL.costa,
       source: new VectorSource({
         features: formato.readFeatures(geo),
+        attributions: ATRIBUCION_DATOS,
       }),
       style: (f) => (f.get("tipo") === "Frontera" ? FRONTERA : COSTA),
     });

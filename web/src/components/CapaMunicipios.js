@@ -20,6 +20,7 @@ import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
 import { useCapa, useMapa } from "../mapa/contexto";
 import { DATOS, NIVEL, VISTA } from "../mapa/geo";
+import { ATRIBUCION_DATOS } from "../lib/creditos";
 import { RUTAS, useGeo } from "../lib/inegi";
 import { tramoDeLluvia } from "../lib/municipios";
 
@@ -89,6 +90,7 @@ function CapaMunicipios({ lluvia, onMunicipio }) {
       zIndex: NIVEL.municipios,
       source: new VectorSource({
         features: formato.readFeatures(geo),
+        attributions: ATRIBUCION_DATOS,
       }),
       style: (f) => {
         const tramo = tramoDeLluvia(lluviaRef.current[f.get("CVEGEO")]);

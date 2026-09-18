@@ -26,6 +26,7 @@ import Style from "ol/style/Style";
 import { useCapa, useMapa } from "../mapa/contexto";
 import { DATOS, NIVEL, VISTA } from "../mapa/geo";
 import { rotulo, SANS } from "../mapa/estilos";
+import { ATRIBUCION_DATOS } from "../lib/creditos";
 import { RUTAS, useGeo } from "../lib/inegi";
 
 /* Área mínima (km²) para que una localidad opte a rótulo en cada zoom. Los
@@ -97,6 +98,7 @@ function CapaLocalidades() {
       declutter: true,
       source: new VectorSource({
         features: formato.readFeatures(geo),
+        attributions: ATRIBUCION_DATOS,
       }),
       /* El recorte por encuadre lo hace ya la propia fuente (sólo se estilan
          las localidades del extent visible), así que aquí basta el corte por

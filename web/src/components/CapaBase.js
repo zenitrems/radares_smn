@@ -8,6 +8,7 @@ import TileLayer from "ol/layer/Tile";
 import XYZ from "ol/source/XYZ";
 import { useCapa } from "../mapa/contexto";
 import { NIVEL } from "../mapa/geo";
+import { ATRIBUCION_DATOS } from "../lib/creditos";
 import { disponible, mapaPorId } from "../lib/mapas";
 
 export default function CapaBase({ id }) {
@@ -21,7 +22,7 @@ export default function CapaBase({ id }) {
       opacity: mapa.opacity ?? 1,
       source: new XYZ({
         url: mapa.url,
-        attributions: "CONAGUA/SMN INEGI " + mapa.attribution,
+        attributions: [ATRIBUCION_DATOS, mapa.attribution].filter(Boolean),
         /* `tileSize` es el mapa que cubre cada tesela y `tilePixelRatio` los
            píxeles de imagen que trae: así se describe una de 512 servida a @2x
            sin tener que desplazar el zoom. */

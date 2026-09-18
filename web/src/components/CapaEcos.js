@@ -17,7 +17,7 @@ import ImageLayer from "ol/layer/Image";
 import ImageStatic from "ol/source/ImageStatic";
 import { useCapa } from "../mapa/contexto";
 import { extentDe, NIVEL, VISTA } from "../mapa/geo";
-
+import { ATRIBUCION_DATOS } from "../lib/creditos";
 
 function CapaEcos({ sitio }) {
   const { producto, frames, idx } = sitio;
@@ -71,6 +71,7 @@ function CapaEcos({ sitio }) {
           url: src,
           imageExtent: extent,
           projection: VISTA,
+          attributions: ATRIBUCION_DATOS,
         })
       );
     });

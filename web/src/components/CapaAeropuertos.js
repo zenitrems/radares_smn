@@ -12,6 +12,7 @@ import { useCapa } from "../mapa/contexto";
 import { DATOS, NIVEL, VISTA } from "../mapa/geo";
 import { ACENTO, MONO, rotulo } from "../mapa/estilos";
 
+import { ATRIBUCION_DATOS } from "../lib/creditos";
 import { RUTAS, useGeo } from "../lib/inegi";
 
 const corto = (nombre) =>
@@ -53,6 +54,7 @@ function CapaAeropuertos() {
       declutter: true,
       source: new VectorSource({
         features: formato.readFeatures(geo),
+        attributions: ATRIBUCION_DATOS,
       }),
       style: (f) => estiloDe(corto(f.get("oaci"))),
     });

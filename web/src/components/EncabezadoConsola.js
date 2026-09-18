@@ -79,7 +79,7 @@ export default function EncabezadoConsola({
 
       <div className="brand">
         <b>Sondeos Radar</b>
-        <span>SMN · PENÍNSULA DE YUCATÁN</span>
+        <span>DATOS SMN · PENÍNSULA DE YUCATÁN</span>
       </div>
       <div className="hdr-sep" />
 
