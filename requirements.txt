@@ -1,2 +1,4 @@
 requests>=2.31
 pillow>=10.3
+psycopg[binary]>=3.2
+python-dotenv>=1.0
