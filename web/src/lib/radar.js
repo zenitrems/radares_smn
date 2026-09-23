@@ -19,6 +19,11 @@ export const GRUPOS_CAPAS = [
     ],
   },
   {
+    id: "estaciones",
+    lb: "Estaciones automáticas",
+    capas: [{ id: "estaciones", lb: "Temperatura y humedad (SMN)", on: true }],
+  },
+  {
     id: "radar",
     lb: "Radar",
     capas: [

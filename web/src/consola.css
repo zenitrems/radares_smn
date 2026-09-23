@@ -149,6 +149,20 @@ main{position:relative;display:grid;grid-template-rows:1fr auto;min-width:0;min-
 .tt-municipio i{display:block;font-style:normal;color:var(--accent);margin-top:2px}
 .tt-municipio i.sin{color:var(--txt-3)}
 
+/* ── estaciones automáticas ── */
+.tt-estacion{background:rgba(17,22,27,.94);border:1px solid var(--line-2);border-radius:3px;
+  padding:6px 9px;color:var(--txt);font-family:var(--mono);font-size:10.5px;line-height:1.5;
+  box-shadow:none;white-space:nowrap}
+.tt-estacion b{display:block;font-family:var(--sans);font-size:12px;font-weight:600;color:#fff}
+.tt-estacion span{display:block;color:var(--txt-3);font-size:9.5px;letter-spacing:.06em}
+.tt-estacion .edad{margin-bottom:3px}
+.tt-estacion .edad.desactualizada{color:#f5d800}
+.tt-estacion .edad.vieja{color:#f0506e}
+.tt-estacion table{border-collapse:collapse}
+.tt-estacion td{color:var(--txt-3);padding:0 8px 0 0}
+.tt-estacion td.v{color:var(--txt);text-align:right;padding-right:0}
+.tt-estacion .sin{color:var(--txt-3);font-style:italic}
+
 .ov{position:absolute;pointer-events:none;font-family:var(--mono);z-index:1000}
 .ov-tl{top:10px;left:12px;font-size:10.5px;line-height:1.6;color:var(--txt-2);letter-spacing:.06em}
 .ov-tl b{display:block;font-size:14px;color:#fff;font-weight:600;letter-spacing:.04em;margin-bottom:2px}

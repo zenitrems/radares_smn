@@ -18,6 +18,7 @@ import CapaAeropuertos from "./CapaAeropuertos";
 import CapaBase from "./CapaBase";
 import CapaCosta from "./CapaCosta";
 import CapaEcos from "./CapaEcos";
+import CapaEstaciones from "./CapaEstaciones";
 import CapaLocalidades from "./CapaLocalidades";
 import CapaMunicipios from "./CapaMunicipios";
 import { CapaAnillos, CapaReticula, CapaSitios } from "./CapaInstrumento";
@@ -233,6 +234,7 @@ export default function MapaRadar({
           {capas.anillos && <CapaAnillos sitios={geo} />}
           {capas.localidades && <CapaLocalidades />}
           {capas.aeropuertos && <CapaAeropuertos />}
+          {capas.estaciones && <CapaEstaciones />}
           {capas.sitio && <CapaSitios sitios={geo} />}
         </ProveedorMapa>
       )}

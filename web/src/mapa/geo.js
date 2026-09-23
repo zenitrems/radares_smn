@@ -45,5 +45,6 @@ export const NIVEL = {
   anillos: 50,
   localidades: 60,
   aeropuertos: 70,
+  estaciones: 75,
   sitios: 80,
 };
