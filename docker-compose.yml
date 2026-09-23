@@ -20,26 +20,6 @@ services:
       - ./sondeos:/data/sondeos:ro
     restart: unless-stopped
 
-  # PostgreSQL local, opcional
-  db:
-    profiles: ["local-db"]
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: ${DB_NAME:-estaciones_smn}
-      POSTGRES_USER: ${POSTGRES_USER:-smn}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
-    ports:
-      - "127.0.0.1:${DB_LOCAL_PORT:-5432}:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./db:/docker-entrypoint-initdb.d:ro
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-    restart: unless-stopped
-
   # Guarda en PostgreSQL las observaciones de las estaciones de estaciones.json
   ingesta:
     build:
@@ -55,10 +35,6 @@ services:
       INGESTA_INTERVAL: ${INGESTA_INTERVAL:-1800}
     volumes:
       - ./estaciones.json:/app/estaciones.json:ro
-    depends_on:
-      db:
-        condition: service_healthy
-        required: false
     restart: unless-stopped
 
   #Python Script
