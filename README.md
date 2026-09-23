@@ -17,6 +17,21 @@ Descarga los sondeos de las estaciones CANCUN y SABANCUY, hasta 100 imágenes de
 python3 descarga_sondeos.py --estaciones CANC,SABA --max-imagenes 100 --interval 150 --gif-dir sondeos
 ```
 
+## Ingesta de estaciones automáticas
+
+`ingesta.py` guarda en PostgreSQL las observaciones (temperatura, humedad, presión, precipitación, radiación, viento y racha) de las estaciones de `estaciones.json`, tomadas del reporte por estación del SIVEA. Al primer arranque descarga 90 días de historia y después sólo las lecturas nuevas.
+
+```bash
+psql -h <host> -U postgres -d estaciones_smn -f db/esquema.sql
+psql -h <host> -U postgres -d estaciones_smn -f db/roles.sql
+```
+
+```bash
+python3 ingesta.py --interval 0
+```
+
+Los valores imposibles que el SMN publica como "sin dato" (presión 0, humedad 0, radiación -1) se guardan como `NULL`, y las lecturas con fecha futura se descartan.
+
 ## Web console /web
 
 En la web, `SONDEOS_DIR` puede ser absoluta o relativa al proceso de Node (que
