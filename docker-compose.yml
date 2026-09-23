@@ -10,10 +10,57 @@ services:
       - "3000:3000"
     environment:
       SONDEOS_DIR: /data/sondeos
+      DB_HOST: ${DB_HOST:-}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-estaciones_smn}
+      DB_SSLMODE: ${DB_SSLMODE:-prefer}
+      WEB_DB_USER: ${WEB_DB_USER:-web_estaciones_smn}
+      WEB_DB_PASSWORD: ${WEB_DB_PASSWORD:-}
     volumes:
       - ./sondeos:/data/sondeos:ro
     restart: unless-stopped
-    
+
+  # PostgreSQL local, opcional
+  db:
+    profiles: ["local-db"]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME:-estaciones_smn}
+      POSTGRES_USER: ${POSTGRES_USER:-smn}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
+    ports:
+      - "127.0.0.1:${DB_LOCAL_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  # Guarda en PostgreSQL las observaciones de las estaciones de estaciones.json
+  ingesta:
+    build:
+      context: .
+      target: ingesta
+    environment:
+      DB_HOST: ${DB_HOST:-}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-estaciones_smn}
+      DB_SSLMODE: ${DB_SSLMODE:-prefer}
+      INGESTA_DB_USER: ${INGESTA_DB_USER:-ingesta_estaciones_smn}
+      INGESTA_DB_PASSWORD: ${INGESTA_DB_PASSWORD:-}
+      INGESTA_INTERVAL: ${INGESTA_INTERVAL:-1800}
+    volumes:
+      - ./estaciones.json:/app/estaciones.json:ro
+    depends_on:
+      db:
+        condition: service_healthy
+        required: false
+    restart: unless-stopped
+
   #Python Script
   descarga:
     build:
@@ -33,3 +80,6 @@ services:
       - ./sondeos:/data/sondeos
       - ./sondeos_archivo:/data/sondeos_archivo
     restart: unless-stopped
+
+volumes:
+  pgdata:
